@@ -1,0 +1,2 @@
+# Statki
+Statki-projekt grupowy
