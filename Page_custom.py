@@ -8,10 +8,12 @@ pygame.display.set_caption('Statki')
 pygame.font.init()
 pygame.mixer.init()
 
+
 background_colour = (135,206,235) 
 screen = pygame.display.set_mode((1920, 1080)) 
 screen.fill(background_colour) 
 
+# Tab declaration
 BoardSize = []
 Ships = [[],[],[],[]]
 
@@ -35,6 +37,7 @@ mixer.music.play(-1)
 mixer.music.set_volume(0.4)
 
 def Custom_page_draw():
+
 
     fonth1 = pygame.font.SysFont("arial.ttf", 70)
     fonth2 = pygame.font.SysFont("arial.ttf", 50)
@@ -106,6 +109,7 @@ while running:
         if event.type == pygame.MOUSEBUTTONUP:
             for b in BoardSize:
                 if b.isOver(pygame.mouse.get_pos()):
+
                     for p in BoardSize:
                         if p.isChecked():
                             p.convert(screen)
@@ -114,11 +118,13 @@ while running:
             for s in Ships:
                 for z in s:
                     if z.isOver(pygame.mouse.get_pos()):
+
                         for d in s:
                             if d.isChecked():
                                 d.convert(screen)
                         z.convert(screen)
                         pygame.display.flip()
+
             if exit_button_rect.collidepoint(event.pos):
                 mixer.music.stop()
                 exit_sound.play()
