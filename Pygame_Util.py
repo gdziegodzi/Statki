@@ -1,5 +1,8 @@
 import pygame
+from pygame import mixer
 
+pygame.mixer.init()
+click_sound = pygame.mixer.Sound('checkbox.mp3')
 class button():
     def __init__(self, color, x, y, width, height, text="", size=60, font=None, outline=0):
         self.color = color
@@ -38,6 +41,9 @@ class checkbox():
         self.font = pygame.font.SysFont(font, size)
         self.size = size
         self.textGap = textGap
+
+
+
     #Draws the checkbox
     def draw(self, win):
         but = button(self.color, self.x, self.y, self.width, self.height, outline=self.outline)
@@ -66,6 +72,11 @@ class checkbox():
     def convert(self, win):
         self.check = not self.check
         self.draw(win)
+
+        if self.check:
+            click_sound.play()
+
+    click_sound = pygame.mixer.Sound('checkbox.mp3')
 
 
             

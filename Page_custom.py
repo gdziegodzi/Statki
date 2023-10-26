@@ -1,7 +1,8 @@
 import Pygame_Util as pu
-from Statki.game_screen import SCREEN_WIDTH
 import pygame
 from pygame import mixer
+
+from game_screen import SCREEN_WIDTH
 
 pygame.display.set_caption('Statki')
 pygame.font.init()
