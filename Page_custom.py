@@ -1,17 +1,43 @@
-import pygame 
 import Pygame_Util as pu
+import pygame
+from pygame import mixer
 
-pygame.display.set_caption('Statki') 
+from game_screen import SCREEN_WIDTH
+
+pygame.display.set_caption('Statki')
+pygame.font.init()
+pygame.mixer.init()
+
 
 background_colour = (135,206,235) 
 screen = pygame.display.set_mode((1920, 1080)) 
 screen.fill(background_colour) 
 
+# Tab declaration
 BoardSize = []
 Ships = [[],[],[],[]]
 
+# Inicjalizacja przycisku wyjścia
+exit_button_width = 150
+exit_button_height = 50
+exit_button_x = SCREEN_WIDTH - exit_button_width - 10
+exit_button_y = 10
+exit_button_rect = pygame.Rect((exit_button_x, exit_button_y, exit_button_width, exit_button_height))
+exit_button_color = (255, 0, 0)
+exit_button_hover_color = (200, 0, 0)
+exit_button_font_size = 30
+exit_button_font = pygame.font.SysFont("monospace", exit_button_font_size, bold=True)
+exit_button_text = exit_button_font.render("Wyjście", 1, (255, 255, 255))
+exit_sound = pygame.mixer.Sound('button.mp3')
+
+# Inicjalizacja Pygame Mixer dla muzyki
+pygame.mixer.init()
+mixer.music.load('background.mp3')
+mixer.music.play(-1)
+mixer.music.set_volume(0.4)
+
 def Custom_page_draw():
-    pygame.font.init()
+
 
     fonth1 = pygame.font.SysFont("arial.ttf", 70)
     fonth2 = pygame.font.SysFont("arial.ttf", 50)
@@ -74,21 +100,16 @@ clock = pygame.time.Clock()
 running = True
 Custom_page_draw()
 
-while running: 
-
-# for loop through the event queue   
-    for event in pygame.event.get(): 
-      
-        # Check for QUIT event       
-        if event.type == pygame.QUIT: 
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            # with open("Page_test.py") as f:
-            #     exec(f.read())
             running = False
         if event.type == pygame.MOUSEBUTTONUP:
             for b in BoardSize:
-                if b.isOver(pygame.mouse.get_pos()) == True:            
+                if b.isOver(pygame.mouse.get_pos()):
+
                     for p in BoardSize:
                         if p.isChecked():
                             p.convert(screen)
@@ -96,12 +117,28 @@ while running:
                     pygame.display.flip()
             for s in Ships:
                 for z in s:
-                    if z.isOver(pygame.mouse.get_pos()) == True:
+                    if z.isOver(pygame.mouse.get_pos()):
+
                         for d in s:
                             if d.isChecked():
                                 d.convert(screen)
                         z.convert(screen)
                         pygame.display.flip()
-    #Screen refresh
-    # pygame.display.update()
-    # clock.tick(30)
+
+            if exit_button_rect.collidepoint(event.pos):
+                mixer.music.stop()
+                exit_sound.play()
+                pygame.time.delay(3000)
+                running = False
+
+    # Rysowanie przycisku wyjścia
+    pygame.draw.rect(screen, exit_button_color, exit_button_rect)
+    if exit_button_rect.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, exit_button_hover_color, exit_button_rect)
+    screen.blit(exit_button_text, (exit_button_x + 10, exit_button_y + 10))
+
+    pygame.display.update()
+    clock.tick(30)
+
+# Zakończenie gry
+pygame.quit()

@@ -1,6 +1,12 @@
+
 import pygame
+from pygame import mixer
 
 pygame.init()
+pygame.mixer.init()
+mixer.music.load('background.mp3')
+mixer.music.play(-1)
+mixer.music.set_volume(0.4)
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -150,6 +156,19 @@ def draw_boards():
 # Press ESC to exit
 pygame.display.set_caption("Statki: Bitwa trwa")
 
+#Leave Button
+exit_button_width = 150
+exit_button_height = 50
+exit_button_x = SCREEN_WIDTH - exit_button_width-10
+exit_button_y = 10
+exit_button_rect = pygame.Rect((exit_button_x, exit_button_y, exit_button_width, exit_button_height))
+exit_button_color = (255, 0, 0)
+exit_button_hover_color = (200, 0, 0)
+exit_button_font_size = 30
+exit_button_font = pygame.font.SysFont("monospace", exit_button_font_size, bold=True)
+exit_button_text = exit_button_font.render("Wyjście", 1, (255, 255, 255))
+exit_sound = pygame.mixer.Sound('button.mp3')
+
 run = True
 clock = pygame.time.Clock()
 
@@ -169,13 +188,30 @@ while run:
     pygame.draw.rect(screen, bottom_ui_bg_color,
                      (bottom_ui_bg_x, bottom_ui_bg_y, bottom_ui_bg_width, bottom_ui_bg_height))
 
+    # Rysujemy przycisk wyjścia
+    pygame.draw.rect(screen, exit_button_color, exit_button_rect)
+    if exit_button_rect.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, exit_button_hover_color, exit_button_rect)
+    screen.blit(exit_button_text, (exit_button_x + 10, exit_button_y + 10))
+
+    exit_button_clicked = False  # Dodaj zmienną do śledzenia czy przycisk wyjścia został kliknięty
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             run = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if exit_button_rect.collidepoint(event.pos):
+                exit_button_clicked = True
 
     pygame.display.update()
     clock.tick(30)
+
+    if exit_button_clicked:
+        mixer.music.stop()
+        exit_sound.play()
+        pygame.time.delay(3000)
+        run = False
 
 pygame.quit()
