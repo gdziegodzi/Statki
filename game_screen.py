@@ -205,7 +205,7 @@ while run:
             if exit_button_rect.collidepoint(event.pos):
                 exit_button_clicked = True
 
-    pygame.display.update()
+    pygame.display.flip()
     clock.tick(30)
 
     if exit_button_clicked:
