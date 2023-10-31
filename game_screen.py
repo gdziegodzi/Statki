@@ -132,6 +132,17 @@ exit_button_font = pygame.font.SysFont("monospace", exit_button_font_size, bold=
 exit_button_text = exit_button_font.render("Wyjście", 1, (255, 255, 255))
 exit_sound = pygame.mixer.Sound('button.mp3')
 
+# timer
+timer_width = 150
+timer_height = 50
+timer_x = 10
+timer_y = 10
+timer_rect = pygame.Rect((timer_x, timer_y, timer_width, timer_height))
+timer_color = (0, 0, 0)
+timer_font_size = 30
+timer_text_color = (255, 255, 255)
+timer_font = pygame.font.SysFont("monospace", timer_font_size, bold=True)
+
 
 def draw_title_text():
     screen.blit(title_text, text_rect)
@@ -258,13 +269,29 @@ def draw_bottom_ui():
                      (bottom_ui_bg_x, bottom_ui_bg_y, bottom_ui_bg_width, bottom_ui_bg_height))
 
 
-# Game loop
-# Press ESC to exit
+def draw_timer():
+    # in ms
+    current_time = pygame.time.get_ticks() - start_time
+
+    hours = str(current_time // 3600_000).zfill(2)
+    minutes = str((current_time // 60_000) % 60).zfill(2)
+    seconds = str((current_time // 1_000) % 60).zfill(2)
+
+    timer_text = exit_button_font.render(f"{hours}:{minutes}:{seconds}", 1, timer_text_color)
+
+    pygame.draw.rect(screen, timer_color, timer_rect)
+    screen.blit(timer_text, (timer_x + 10, timer_y + 10))
+
+
 pygame.display.set_caption("Statki: Bitwa trwa")
 
+clock = pygame.time.Clock()
+start_time = pygame.time.get_ticks()
+
+# Game loop
+# Press ESC to exit
 run = True
 show_legend = False
-clock = pygame.time.Clock()
 
 while run:
     screen.fill((0, 0, 0))
@@ -290,6 +317,9 @@ while run:
 
     # draw exit button
     draw_exit_button()
+
+    # draw timer
+    draw_timer()
 
     exit_button_clicked = False  # Dodaj zmienną do śledzenia czy przycisk wyjścia został kliknięty
 
