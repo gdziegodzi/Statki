@@ -1,15 +1,35 @@
-
 import pygame
 from pygame import mixer
+import tkinter as tk
+from tkinter import Scale
 
+
+volume = 0.5
 pygame.init()
 pygame.mixer.init()
 mixer.music.load('background.mp3')
 mixer.music.play(-1)
-mixer.music.set_volume(0.4)
+mixer.music.set_volume(volume)
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
+
+
+def change_volume(new_volume):
+    volume = float(new_volume)
+    mixer.music.set_volume(volume)
+
+
+def show_volume_settings():
+    root = tk.Tk()
+    root.title("Zmiana głośności")
+    root.geometry("400x100")
+
+    volume_scale = Scale(root, label="Głośność", from_=0.01, to=1.00, resolution=0.01, orient="horizontal", command=change_volume)
+    volume_scale.set(mixer.music.get_volume())  # Ustaw aktualną głośność
+    volume_scale.pack()
+    root.mainloop()
+
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -169,6 +189,22 @@ exit_button_font = pygame.font.SysFont("monospace", exit_button_font_size, bold=
 exit_button_text = exit_button_font.render("Wyjście", 1, (255, 255, 255))
 exit_sound = pygame.mixer.Sound('button.mp3')
 
+# Add the Settings button
+settings_button_width = 160
+settings_button_height = 50
+settings_button_x = SCREEN_WIDTH - settings_button_width - 200
+settings_button_y = 10  # Adjust the vertical position
+settings_button_rect = pygame.Rect((settings_button_x, settings_button_y, settings_button_width, settings_button_height))
+settings_button_color = (128,128,128)  # Green button color
+settings_button_hover_color = (128,128,200)  # Green hover color
+settings_button_font_size = 30
+settings_button_font = pygame.font.SysFont("monospace", settings_button_font_size, bold=True)
+settings_button_text = settings_button_font.render("Settings", 1, (255, 255, 255))
+
+# Utworzenie flagi do śledzenia, czy przycisk wyjścia został kliknięty
+exit_button_clicked = False
+
+# Główna pętla gry
 run = True
 clock = pygame.time.Clock()
 
@@ -181,6 +217,7 @@ while run:
     # title text draw
     screen.blit(title_text, text_rect)
 
+
     # draw boards
     draw_boards()
 
@@ -190,11 +227,14 @@ while run:
 
     # Rysujemy przycisk wyjścia
     pygame.draw.rect(screen, exit_button_color, exit_button_rect)
+    pygame.draw.rect(screen, settings_button_color, settings_button_rect)
+    if settings_button_rect.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, settings_button_hover_color, settings_button_rect)
+    screen.blit(settings_button_text, (settings_button_x + 10, settings_button_y + 10))
+
     if exit_button_rect.collidepoint(pygame.mouse.get_pos()):
         pygame.draw.rect(screen, exit_button_hover_color, exit_button_rect)
     screen.blit(exit_button_text, (exit_button_x + 10, exit_button_y + 10))
-
-    exit_button_clicked = False  # Dodaj zmienną do śledzenia czy przycisk wyjścia został kliknięty
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -202,7 +242,9 @@ while run:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if exit_button_rect.collidepoint(event.pos):
+            if settings_button_rect.collidepoint(event.pos):
+                show_volume_settings()
+            elif exit_button_rect.collidepoint(event.pos):
                 exit_button_clicked = True
 
     pygame.display.flip()
