@@ -1,12 +1,33 @@
 import Pygame_Util as pu
 import pygame
 from pygame import mixer
+import tkinter as tk
 
 from game_screen import SCREEN_WIDTH
 
 pygame.display.set_caption('Statki')
 pygame.font.init()
+volume = 0.5
+pygame.init()
 pygame.mixer.init()
+mixer.music.load('background.mp3')
+mixer.music.play(-1)
+mixer.music.set_volume(volume)
+
+def change_volume(new_volume):
+    volume = float(new_volume)
+    mixer.music.set_volume(volume)
+
+
+def show_volume_settings():
+    root = tk.Tk()
+    root.title("Zmiana głośności")
+    root.geometry("400x100")
+
+    volume_scale = tk.Scale(root, label="Głośność", from_=0.01, to=1.00, resolution=0.01, orient="horizontal", command=change_volume)
+    volume_scale.set(mixer.music.get_volume())  # Ustaw aktualną głośność
+    volume_scale.pack()
+    root.mainloop()
 
 
 background_colour = (135,206,235) 
@@ -30,11 +51,19 @@ exit_button_font = pygame.font.SysFont("monospace", exit_button_font_size, bold=
 exit_button_text = exit_button_font.render("Wyjście", 1, (255, 255, 255))
 exit_sound = pygame.mixer.Sound('button.mp3')
 
-# Inicjalizacja Pygame Mixer dla muzyki
-pygame.mixer.init()
-mixer.music.load('background.mp3')
-mixer.music.play(-1)
-mixer.music.set_volume(0.4)
+# Add the Settings button
+settings_button_width = 160
+settings_button_height = 50
+settings_button_x = SCREEN_WIDTH - settings_button_width - 200
+settings_button_y = 10  # Adjust the vertical position
+settings_button_rect = pygame.Rect((settings_button_x, settings_button_y, settings_button_width, settings_button_height))
+settings_button_color = (128,128,128)  # Green button color
+settings_button_hover_color = (128,128,200)  # Green hover color
+settings_button_font_size = 30
+settings_button_font = pygame.font.SysFont("monospace", settings_button_font_size, bold=True)
+settings_button_text = settings_button_font.render("Settings", 1, (255, 255, 255))
+
+
 
 def Custom_page_draw():
 
@@ -107,9 +136,9 @@ while running:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             running = False
         if event.type == pygame.MOUSEBUTTONUP:
+            # Sprawdź przyciski na planszy i statki
             for b in BoardSize:
                 if b.isOver(pygame.mouse.get_pos()):
-
                     for p in BoardSize:
                         if p.isChecked():
                             p.convert(screen)
@@ -118,27 +147,31 @@ while running:
             for s in Ships:
                 for z in s:
                     if z.isOver(pygame.mouse.get_pos()):
-
                         for d in s:
                             if d.isChecked():
                                 d.convert(screen)
                         z.convert(screen)
                         pygame.display.flip()
-
-            if exit_button_rect.collidepoint(event.pos):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if settings_button_rect.collidepoint(event.pos):
+                show_volume_settings()
+            elif exit_button_rect.collidepoint(event.pos):
                 mixer.music.stop()
                 exit_sound.play()
                 pygame.time.delay(3000)
                 running = False
 
-    # Rysowanie przycisku wyjścia
-    pygame.draw.rect(screen, exit_button_color, exit_button_rect)
-    if exit_button_rect.collidepoint(pygame.mouse.get_pos()):
-        pygame.draw.rect(screen, exit_button_hover_color, exit_button_rect)
+    # Rysuj przyciski i tekst na ekranie
+    pygame.draw.rect(screen, exit_button_color if not exit_button_rect.collidepoint(
+        pygame.mouse.get_pos()) else exit_button_hover_color, exit_button_rect)
+    pygame.draw.rect(screen, settings_button_color if not settings_button_rect.collidepoint(
+        pygame.mouse.get_pos()) else settings_button_hover_color, settings_button_rect)
+
+    # Tekst na przyciskach
+    screen.blit(settings_button_text, (settings_button_x + 10, settings_button_y + 10))
     screen.blit(exit_button_text, (exit_button_x + 10, exit_button_y + 10))
 
     pygame.display.update()
-    clock.tick(30)
 
 # Zakończenie gry
 pygame.quit()
