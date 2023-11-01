@@ -6,19 +6,21 @@ click_sound = pygame.mixer.Sound('checkbox.mp3')
 
 class button():
     def __init__(self, color, x, y, width, height, text="", size=60, font=None, outline=0):
-        self.color = color
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.text = text
-        self.size = size
-        self.font = pygame.font.SysFont(font, size)
-        self.outline = outline
+        self.color = color                              # kolor przycisku
+        self.x = x                                      # x pos
+        self.y = y                                      # y pos
+        self.width = width                              # szerokość przycisku
+        self.height = height                            # wysokość przycisku
+        self.text = text                                # teskt na przycisku
+        self.size = size                                # wielkość tekstu
+        self.font = pygame.font.SysFont(font, size)     # rodzaj czcionki
+        self.outline = outline                          # szerokość obramowania
+
+        self.but_rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
     #Draws the button, outline may be provided
     def draw(self, win):
-        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), self.outline)
+        pygame.draw.rect(win, self.color, self.but_rect, self.outline)
 
         if self.text != "":
             text = self.font.render(self.text, 1, (0, 0, 0))
@@ -31,20 +33,21 @@ class button():
 
 class checkbox():
     def __init__(self, color , x, y, width, height, backgroundcolor = (255,255,255), checkcolor = (255,0,0), outline=1, check=False, text="", size=60, font=None, textGap = 10):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.outline = outline
-        self.color = color
-        self.check = check
-        self.backgroundcolor = backgroundcolor
-        self.checkcolor = checkcolor
-        self.text = text
-        self.font = pygame.font.SysFont(font, size)
-        self.size = size
-        self.textGap = textGap
+        self.x = x                                       # x pos
+        self.y = y                                       # y pos
+        self.width = width                               # szerokość
+        self.height = height                             # wysokość
+        self.outline = outline                           # grubośc obramowania
+        self.color = color                               # color obramowania
+        self.check = check                               # zmienna "czy zaznaczone"
+        self.backgroundcolor = backgroundcolor           # kolor tła niezaznaczone
+        self.checkcolor = checkcolor                     # kolor tła zaznaczone
+        self.text = text                                 # tekst
+        self.font = pygame.font.SysFont(font, size)      # rodzaj czcionki
+        self.size = size                                 # rozmair tekstu
+        self.textGap = textGap                           # odległość tekstu od obramowania
 
+        self.check_rect = pygame.Rect(self.x, self.y, self.width, self.height)
     #Draws the checkbox
     def draw(self, win):
         but = button(self.color, self.x, self.y, self.width, self.height, outline=self.outline)
@@ -79,5 +82,29 @@ class checkbox():
 
     click_sound = pygame.mixer.Sound('checkbox.mp3')
 
+class slider():
+    def __init__(self, color , x, y, width, height, value = 0,  backgroundcolor = (255,255,255), outline=0):
+        self.color = color
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        
+        self.backgroundcolor = backgroundcolor
+        self.outline = outline
 
-            
+        self.value = value
+        self.conteiner_rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.button_rect = pygame.Rect(self.x , self.y, self.height, self.height)
+
+    def move_slider(self, screen, mpos):
+        self.button_rect.centerx = mpos[0]
+        self.draw(screen)
+        
+    #draw a slider    
+    def draw(self, win):
+        pygame.draw.rect(win, self.backgroundcolor, self.conteiner_rect)
+        pygame.draw.rect(win, self.color,  self.button_rect)
+    #sprawdzanie kolizji
+    def isOver(self, pos):
+        return (pos[0] > self.x and pos[0] < self.x + self.width and pos[1] > self.y and pos[1] < self.y + self.height)
