@@ -1,7 +1,11 @@
 import pygame
 import Pygame_Util as pu
+from pygame import mixer
 
 pygame.init()
+pygame.mixer.init()
+mixer.music.load('startButton.mp3')
+mixer.music.set_volume(1)
 
 # Screen settings
 SCREEN_WIDTH = 1620
@@ -67,6 +71,8 @@ def draw_main_menu():
 def start_game():
     # Call the code from the previous program, e.g., the function draw_boards()
     #draw_boards()
+    mixer.music.play()
+    pygame.time.delay(1200)
     pygame.quit()
     quit()
     
@@ -75,15 +81,21 @@ def start_game():
 def options():
     # Call the code from the previous program, e.g., the function Custom_page_draw()
     #Custom_page_draw()
+    mixer.music.play()
+    pygame.time.delay(1200)
     pygame.quit()
     quit()
 
 # Function to quit the game
 def quit_game():
+    mixer.music.play()
+    pygame.time.delay(1200)
     pygame.quit()
     quit()
 
 def scoreboard():
+    mixer.music.play()
+    pygame.time.delay(1200)
     pygame.quit()
     quit()
 

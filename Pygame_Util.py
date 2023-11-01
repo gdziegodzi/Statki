@@ -30,7 +30,7 @@ class button():
 
 
 class checkbox():
-    def __init__(self, color, x, y, width, height, backgroundcolor = (255,255,255), checkcolor = (255,0,0), outline=1, check=False, text="", size=60, font=None, textGap = 10):
+    def __init__(self, color , x, y, width, height, backgroundcolor = (255,255,255), checkcolor = (255,0,0), outline=1, check=False, text="", size=60, font=None, textGap = 10):
         self.x = x
         self.y = y
         self.width = width
@@ -57,9 +57,9 @@ class checkbox():
         if self.check:
             # pygame.draw.line(win, (0, 0, 0), (self.x, self.y), (self.x + self.width - self.outline, self.y + self.height - self.outline))
             # pygame.draw.line(win, (0, 0, 0), (self.x - self.outline + self.width, self.y), (self.x, self.y + self.height - self.outline))
-            pygame.draw.rect(win, self.checkcolor, (self.x, self.y, self.width , self.height ))
+            pygame.draw.rect(win, self.checkcolor, (self.x + self.outline, self.y + self.outline, self.width - self.outline*2, self.height - self.outline*2))
         else:
-            pygame.draw.rect(win, self.backgroundcolor, (self.x, self.y, self.width , self.height ))
+            pygame.draw.rect(win, self.backgroundcolor, (self.x + self.outline, self.y + self.outline, self.width - self.outline*2, self.height - self.outline*2))
 
     #Returns true if the given pos (either tuple or list) is over the box
     def isOver(self, pos):
