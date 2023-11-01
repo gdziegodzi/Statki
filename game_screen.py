@@ -1,8 +1,8 @@
-
 import pygame
 from pygame import mixer
 
 pygame.init()
+
 pygame.mixer.init()
 mixer.music.load('background.mp3')
 mixer.music.play(-1)
@@ -13,7 +13,7 @@ SCREEN_HEIGHT = 1080
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-#  ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # mocked game board to test
 """
     space - empty space
@@ -31,26 +31,29 @@ game_board_1 = [[" " for c in range(game_board_cols)] for r in range(game_board_
 game_board_1[0][0] = "S"
 game_board_1[0][1] = "S"
 game_board_1[0][2] = "S"
-game_board_1[3][2] = "."
+game_board_1[6][5] = "S"
+game_board_1[7][5] = "S"
+game_board_1[8][5] = "S"
+game_board_1[3][6] = "."
 game_board_1[5][7] = "."
 game_board_1[7][4] = "."
 game_board_1[7][7] = "X"
 game_board_1[4][2] = "X"
-game_board_1[4][4] = "X"
+game_board_1[4][3] = "X"
 
 game_board_2 = [[" " for c in range(game_board_cols)] for r in range(game_board_rows)]
 game_board_2[0][0] = "S"
 game_board_2[1][0] = "S"
 game_board_2[2][0] = "S"
-game_board_2[3][0] = "X"
-game_board_2[4][2] = "."
-game_board_2[5][7] = "."
-game_board_2[6][6] = "."
-game_board_2[7][7] = "."
-game_board_2[7][1] = "."
 game_board_2[4][0] = "X"
 game_board_2[1][3] = "X"
-#  ------------------------------------------------------------------------- end mock
+game_board_2[1][4] = "X"
+game_board_2[4][2] = "."
+game_board_2[5][7] = "."
+game_board_2[7][7] = "."
+game_board_2[7][1] = "."
+
+# -------------------------------------------------------------------------- end mock
 
 # title background
 title_bg_color = (0, 192, 255)
@@ -61,7 +64,7 @@ title_bg_y = 0
 title_bg_rectangle = pygame.Rect((title_bg_x, title_bg_y, title_bg_width, title_bg_height))
 
 # title text
-title_text_string = "Lorem ipsum"
+title_text_string = "Statki"
 title_text_color = (64, 255, 32)
 title_font_size = 50
 my_font = pygame.font.SysFont("monospace", title_font_size, bold=True)
@@ -69,6 +72,13 @@ title_text = my_font.render(title_text_string, 1, title_text_color)
 title_text_x = SCREEN_WIDTH // 2 - title_text.get_rect().width
 title_text_y = title_bg_y + title_text.get_rect().height // 2
 text_rect = title_text.get_rect(center=title_bg_rectangle.center)
+
+# board colors
+tile_color_empty = (255, 255, 255)
+tile_color_ship = (140, 70, 20)
+tile_color_shotted_empty = (128, 128, 128)
+tile_color_shotted_ship = (255, 0, 0)
+tile_color_border = (128, 255, 0)
 
 # bottom ui background (footer)
 bottom_ui_bg_color = (0, 192, 255)
@@ -78,16 +88,73 @@ bottom_ui_bg_x = 0
 bottom_ui_bg_y = 980
 bottom_ui_bg_rectangle = pygame.Rect((title_bg_x, title_bg_y, title_bg_width, title_bg_height))
 
+# legend button
+legend_button_width = 150
+legend_button_height = 50
+legend_button_x = SCREEN_WIDTH - legend_button_width - 10
+legend_button_y = 75
+legend_button_rect = pygame.Rect((legend_button_x, legend_button_y, legend_button_width, legend_button_height))
+legend_button_color = (0, 200, 0)
+legend_button_hover_color = (0, 150, 0)
+legend_button_font_size = 30
+legend_button_font = pygame.font.SysFont("monospace", legend_button_font_size, bold=True)
+legend_button_text = legend_button_font.render("Legenda", 1, (255, 255, 255))
+legend_button_leave_text = legend_button_font.render("Powrót", 1, (255, 255, 255))
+
+# legend
+legend_bg_color = (0, 192, 255)
+legend_bg_x = 50
+legend_bg_y = 150
+legend_bg_width = screen.get_width() - 2 * legend_bg_x
+legend_bg_height = 775
+legend_bg_rectangle = pygame.Rect((legend_bg_x, legend_bg_y, legend_bg_width, legend_bg_height))
+
+# legend text
+legend_text_color = (0, 0, 0)
+legend_font_size = 32
+legend_font = pygame.font.SysFont("monospace", legend_font_size, bold=True)
+legend_padding = 50
+legend_row_spacing = 100
+legend_text_x = legend_bg_x + legend_padding
+legend_text_y = legend_bg_y + legend_padding
+legend_text_left_margin = 75
+
+# exit button
+exit_button_width = 150
+exit_button_height = 50
+exit_button_x = SCREEN_WIDTH - exit_button_width - 10
+exit_button_y = 10
+exit_button_rect = pygame.Rect((exit_button_x, exit_button_y, exit_button_width, exit_button_height))
+exit_button_color = (255, 0, 0)
+exit_button_hover_color = (200, 0, 0)
+exit_button_font_size = 30
+exit_button_font = pygame.font.SysFont("monospace", exit_button_font_size, bold=True)
+exit_button_text = exit_button_font.render("Wyjście", 1, (255, 255, 255))
+exit_sound = pygame.mixer.Sound('button.mp3')
+
+# timer
+timer_width = 150
+timer_height = 50
+timer_x = 10
+timer_y = 10
+timer_rect = pygame.Rect((timer_x, timer_y, timer_width, timer_height))
+timer_color = (0, 0, 0)
+timer_font_size = 30
+timer_text_color = (255, 255, 255)
+timer_font = pygame.font.SysFont("monospace", timer_font_size, bold=True)
+
+
+def draw_title_text():
+    screen.blit(title_text, text_rect)
+
+
+def draw_title_background():
+    pygame.draw.rect(screen, title_bg_color, title_bg_rectangle)
+
 
 def prepare_board(game_board, tile_size, hide_ships=False):
-    tile_color_empty = (255, 255, 255)
-    tile_color_ship = (140, 70, 20)
-    tile_color_shotted_empty = (128, 128, 128)
-    tile_color_shotted_ship = (255, 0, 0)
-
-    tile_color_border = (128, 255, 0)
-
     tile_border_size = 1
+
     board = pygame.Surface(
         (tile_size * game_board_cols + 4 * tile_border_size, tile_size * game_board_rows + 4 * tile_border_size))
 
@@ -152,47 +219,107 @@ def draw_boards():
     screen.blit(board2, (start_x + tile_size * game_board_cols + space_between_boards, start_y))
 
 
-# Game loop
-# Press ESC to exit
+def draw_legend_button(is_legend_shown):
+    pygame.draw.rect(screen, legend_button_color, legend_button_rect)
+
+    if legend_button_rect.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, legend_button_hover_color, legend_button_rect)
+
+    if not is_legend_shown:
+        screen.blit(legend_button_text, (legend_button_x + 10, legend_button_y + 10))
+    else:
+        screen.blit(legend_button_leave_text, (legend_button_x + 10, legend_button_y + 10))
+
+
+def draw_legend():
+    legend_texts = ["- puste miejsce / niesprawdzone miejsce",
+                    "- statek",
+                    "- trafiony statek",
+                    "- pudło / miejsce w którym na pewno nie ma statku"]
+
+    legend_rendered_texts = [legend_font.render(legend_texts[0], 1, legend_text_color),
+                             legend_font.render(legend_texts[1], 1, legend_text_color),
+                             legend_font.render(legend_texts[2], 1, legend_text_color),
+                             legend_font.render(legend_texts[3], 1, legend_text_color)]
+
+    board_colors = [tile_color_empty, tile_color_ship, tile_color_shotted_ship, tile_color_shotted_empty]
+
+    pygame.draw.rect(screen, legend_bg_color, legend_bg_rectangle)
+
+    for i in range(4):
+        pygame.draw.rect(screen, board_colors[i],
+                         (legend_bg_x + legend_padding, legend_bg_y + legend_padding + i * legend_row_spacing, 50, 50))
+
+        screen.blit(legend_rendered_texts[i],
+                    (legend_text_x + legend_text_left_margin,
+                     legend_text_y + i * legend_row_spacing + legend_rendered_texts[i].get_height() // 4))
+
+
+def draw_exit_button():
+    pygame.draw.rect(screen, exit_button_color, exit_button_rect)
+
+    if exit_button_rect.collidepoint(pygame.mouse.get_pos()):
+        pygame.draw.rect(screen, exit_button_hover_color, exit_button_rect)
+
+    screen.blit(exit_button_text, (exit_button_x + 10, exit_button_y + 10))
+
+
+def draw_bottom_ui():
+    pygame.draw.rect(screen, bottom_ui_bg_color,
+                     (bottom_ui_bg_x, bottom_ui_bg_y, bottom_ui_bg_width, bottom_ui_bg_height))
+
+
+def draw_timer():
+    # in ms
+    current_time = pygame.time.get_ticks() - start_time
+
+    hours = str(current_time // 3600_000).zfill(2)
+    minutes = str((current_time // 60_000) % 60).zfill(2)
+    seconds = str((current_time // 1_000) % 60).zfill(2)
+
+    timer_text = exit_button_font.render(f"{hours}:{minutes}:{seconds}", 1, timer_text_color)
+
+    pygame.draw.rect(screen, timer_color, timer_rect)
+    screen.blit(timer_text, (timer_x + 10, timer_y + 10))
+
+
 pygame.display.set_caption("Statki: Bitwa trwa")
 
-#Leave Button
-exit_button_width = 150
-exit_button_height = 50
-exit_button_x = SCREEN_WIDTH - exit_button_width-10
-exit_button_y = 10
-exit_button_rect = pygame.Rect((exit_button_x, exit_button_y, exit_button_width, exit_button_height))
-exit_button_color = (255, 0, 0)
-exit_button_hover_color = (200, 0, 0)
-exit_button_font_size = 30
-exit_button_font = pygame.font.SysFont("monospace", exit_button_font_size, bold=True)
-exit_button_text = exit_button_font.render("Wyjście", 1, (255, 255, 255))
-exit_sound = pygame.mixer.Sound('button.mp3')
-
-run = True
 clock = pygame.time.Clock()
+start_time = pygame.time.get_ticks()
+
+# Game loop
+# Press ESC to exit
+run = True
+show_legend = False
 
 while run:
     screen.fill((0, 0, 0))
 
     # title background draw
-    pygame.draw.rect(screen, title_bg_color, title_bg_rectangle)
+    draw_title_background()
 
     # title text draw
-    screen.blit(title_text, text_rect)
+    draw_title_text()
 
     # draw boards
     draw_boards()
 
-    # draw bottom ui (footer)
-    pygame.draw.rect(screen, bottom_ui_bg_color,
-                     (bottom_ui_bg_x, bottom_ui_bg_y, bottom_ui_bg_width, bottom_ui_bg_height))
+    # draw button showing legend
+    draw_legend_button(show_legend)
 
-    # Rysujemy przycisk wyjścia
-    pygame.draw.rect(screen, exit_button_color, exit_button_rect)
-    if exit_button_rect.collidepoint(pygame.mouse.get_pos()):
-        pygame.draw.rect(screen, exit_button_hover_color, exit_button_rect)
-    screen.blit(exit_button_text, (exit_button_x + 10, exit_button_y + 10))
+    # draw legend
+    if show_legend:
+        draw_legend()
+
+    # draw bottom ui (footer)
+    draw_bottom_ui()
+
+    # draw exit button
+    draw_exit_button()
+
+    # draw timer
+    draw_timer()
 
     exit_button_clicked = False  # Dodaj zmienną do śledzenia czy przycisk wyjścia został kliknięty
 
@@ -204,14 +331,16 @@ while run:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if exit_button_rect.collidepoint(event.pos):
                 exit_button_clicked = True
-
-    pygame.display.flip()
-    clock.tick(30)
+            elif legend_button_rect.collidepoint(event.pos):
+                show_legend = not show_legend
 
     if exit_button_clicked:
         mixer.music.stop()
         exit_sound.play()
         pygame.time.delay(3000)
         run = False
+
+    pygame.display.flip()
+    clock.tick(30)
 
 pygame.quit()
