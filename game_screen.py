@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import Scale
 
 
-volume = 0.5
+volume = 0.05
 pygame.init()
 
 pygame.mixer.init()
@@ -77,7 +77,7 @@ game_board_2[7][1] = "."
 # -------------------------------------------------------------------------- end mock
 
 # title background
-title_bg_color = (0, 192, 255)
+title_bg_color = (200, 232, 232)
 title_bg_width = 1000
 title_bg_height = 75
 title_bg_x = (SCREEN_WIDTH // 2) - (title_bg_width // 2)
@@ -86,7 +86,7 @@ title_bg_rectangle = pygame.Rect((title_bg_x, title_bg_y, title_bg_width, title_
 
 # title text
 title_text_string = "Statki"
-title_text_color = (64, 255, 32)
+title_text_color = (19, 38, 87)
 title_font_size = 50
 my_font = pygame.font.SysFont("monospace", title_font_size, bold=True)
 title_text = my_font.render(title_text_string, 1, title_text_color)
@@ -99,10 +99,10 @@ tile_color_empty = (255, 255, 255)
 tile_color_ship = (140, 70, 20)
 tile_color_shotted_empty = (128, 128, 128)
 tile_color_shotted_ship = (255, 0, 0)
-tile_color_border = (128, 255, 0)
+tile_color_border = (200, 232, 232)
 
 # bottom ui background (footer)
-bottom_ui_bg_color = (0, 192, 255)
+bottom_ui_bg_color = (200, 232, 232)
 bottom_ui_bg_width = SCREEN_WIDTH
 bottom_ui_bg_height = 100
 bottom_ui_bg_x = 0
@@ -123,7 +123,7 @@ legend_button_text = legend_button_font.render("Legenda", 1, (255, 255, 255))
 legend_button_leave_text = legend_button_font.render("Powrót", 1, (255, 255, 255))
 
 # legend
-legend_bg_color = (0, 192, 255)
+legend_bg_color = (189, 189, 189)
 legend_bg_x = 50
 legend_bg_y = 150
 legend_bg_width = screen.get_width() - 2 * legend_bg_x
@@ -159,9 +159,9 @@ timer_height = 50
 timer_x = 10
 timer_y = 10
 timer_rect = pygame.Rect((timer_x, timer_y, timer_width, timer_height))
-timer_color = (0, 0, 0)
+timer_color = (200, 232, 232)
 timer_font_size = 30
-timer_text_color = (255, 255, 255)
+timer_text_color = (12, 13, 13)
 timer_font = pygame.font.SysFont("monospace", timer_font_size, bold=True)
 
 
@@ -205,7 +205,7 @@ def prepare_board(game_board, tile_size, hide_ships=False):
 
 
 def draw_axis_description(tile_size, space_between_boards, start_x, start_y):
-    text_color = (255, 255, 255)
+    text_color = (12, 13, 13)
     font_size = 30
     offset = 15
     total_space = space_between_boards + tile_size * game_board_cols
@@ -320,7 +320,7 @@ settings_button_color = (128,128,128)  # Green button color
 settings_button_hover_color = (128,128,200)  # Green hover color
 settings_button_font_size = 30
 settings_button_font = pygame.font.SysFont("monospace", settings_button_font_size, bold=True)
-settings_button_text = settings_button_font.render("Settings", 1, (255, 255, 255))
+settings_button_text = settings_button_font.render("Głośność", 1, (255, 255, 255))
 
 # Utworzenie flagi do śledzenia, czy przycisk wyjścia został kliknięty
 exit_button_clicked = False
@@ -329,7 +329,7 @@ run = True
 show_legend = False
 
 while run:
-    screen.fill((0, 0, 0))
+    screen.fill((200, 232, 232))
 
     # title background draw
     draw_title_background()

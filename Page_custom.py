@@ -7,7 +7,7 @@ from game_screen import SCREEN_WIDTH
 
 pygame.display.set_caption('Statki')
 pygame.font.init()
-volume = 0.5
+volume = 0.05
 pygame.init()
 pygame.mixer.init()
 mixer.music.load('background.mp3')
@@ -30,7 +30,7 @@ def show_volume_settings():
     root.mainloop()
 
 
-background_colour = (135,206,235) 
+background_colour = (200, 232, 232)
 screen = pygame.display.set_mode((1920, 1080)) 
 screen.fill(background_colour) 
 
@@ -61,7 +61,7 @@ settings_button_color = (128,128,128)  # Green button color
 settings_button_hover_color = (128,128,200)  # Green hover color
 settings_button_font_size = 30
 settings_button_font = pygame.font.SysFont("monospace", settings_button_font_size, bold=True)
-settings_button_text = settings_button_font.render("Settings", 1, (255, 255, 255))
+settings_button_text = settings_button_font.render("Głośność", 1, (255, 255, 255))
 
 
 
@@ -75,9 +75,9 @@ def Custom_page_draw():
     screen.blit(text, (100,50))
 
     #Ability overlay
-    text = fonth1.render("Special ability", False, (0,0,0))
+    text = fonth1.render("Umiejętności specjalne", False, (0,0,0))
     screen.blit(text, (1200,300))
-    text = fonth2.render("Coming soon", False, (0,0,0))
+    text = fonth2.render("Zostaną dodane wkrótce!", False, (0,0,0))
     screen.blit(text, (1250,400))
 
     #Board Button overlay 
@@ -100,16 +100,16 @@ def Custom_page_draw():
 
     #Ships Text overlay
 
-    text = fonth1.render("Ships", False, (0,0,0))
+    text = fonth1.render("Statki", False, (0,0,0))
     screen.blit(text, (100,250))
 
-    text = fonth2.render("Number of 1 block ship", False, (0,0,0))
+    text = fonth2.render("Liczba statków o wielkości 1", False, (0,0,0))
     screen.blit(text, (130,320))
-    text = fonth2.render("Number of 2 block ship", False, (0,0,0))
+    text = fonth2.render("Liczba statków o wielkości 2", False, (0,0,0))
     screen.blit(text, (130,470))
-    text = fonth2.render("Number of 3 block ship", False, (0,0,0))
+    text = fonth2.render("Liczba statków o wielkości 3", False, (0,0,0))
     screen.blit(text, (130,620))
-    text = fonth2.render("Number of 4 block ship", False, (0,0,0))
+    text = fonth2.render("Liczba statków o wielkości 4", False, (0,0,0))
     screen.blit(text, (130,770))
 
 
