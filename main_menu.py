@@ -23,7 +23,7 @@ menu_lettering = (19, 38, 87)
 title_font_size = 80
 button_font_size = 40
 title_font = pygame.font.SysFont("Comics Sans", title_font_size, bold=True)
-font = pygame.font.SysFont("Comics Sans", button_font_size, bold=True)
+font = pygame.font.SysFont("Comics Sans", button_font_size, bold=False)
 
 # Menu buttons
 menu_buttons = [
@@ -73,7 +73,6 @@ def draw_main_menu():
 
     pygame.display.update()
 
-
 # Function to start a new game
 def start_game():
     # Call the code from the previous program, e.g., the function draw_boards()
@@ -112,13 +111,11 @@ clock = pygame.time.Clock()
 
 while run:
     for event in pygame.event.get():
-
         if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-
             if event.button == 1:  # Left mouse button
                 for i, button in enumerate(menu_buttons):
                     button_width = font.render(button["text"], 1, button_text_color).get_width() + 20
