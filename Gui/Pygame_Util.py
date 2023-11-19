@@ -2,7 +2,7 @@ import pygame
 from pygame import mixer
 
 pygame.mixer.init()
-click_sound = pygame.mixer.Sound('checkbox.mp3')
+# click_sound = pygame.mixer.Sound('checkbox.mp3')
 
 class button():
     def __init__(self, color, x, y, width, height, text="", text_color = (0,0,0), font=None, size=60, outline=0):
@@ -78,10 +78,10 @@ class checkbox():
         self.check = not self.check
         self.draw(win)
 
-        if self.check:
-            click_sound.play()
+        # if self.check:
+            # click_sound.play()
 
-    click_sound = pygame.mixer.Sound('checkbox.mp3')
+    # click_sound = pygame.mixer.Sound('checkbox.mp3')
 
 class slider():
     def __init__(self, color , x, y, width, height, value = 0.0, min = 0.0, max = 100.0, backgroundcolor = (255,255,255), outline=0):
