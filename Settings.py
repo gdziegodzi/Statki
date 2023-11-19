@@ -68,7 +68,14 @@ def Draw_Settings():
         a +=1
         but = pu.button(button_color,buttons_x,buttons_y - (a*buttons_spacing),buttons_width,buttons_height,
         i["text"], (255, 255, 255), button_font, buttons_font_size)
-        but.draw(screen)
+        #podświetlanie przycisku
+        if but.but_rect.collidepoint(pygame.mouse.get_pos()):
+            but.color = (100, 50, 50)
+            pygame.draw.rect(screen,(0, 0, 0), pygame.Rect(buttons_x-5,buttons_y-5-(a*buttons_spacing),buttons_width+10, buttons_height+10))
+            but.draw(screen)
+        else:
+            but.color = button_color
+            but.draw(screen)
 
     #draw sliders
     volumeMusicSlider.draw(screen)
