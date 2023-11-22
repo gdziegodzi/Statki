@@ -432,5 +432,16 @@ class game_screen():
         for r in range(self.game_board_rows):
             print(board[r])
         print()
+            
+        for r in range(self.game_board_rows):
+            for c in range(self.game_board_cols):
+                if board[r][c] == ".":
+                    board[r][c] = " "
+            
+        # TODO delete after develop
+        # draw board after preparing
+        for r in range(self.game_board_rows):
+            print(board[r])
+        print()
 
         return board
