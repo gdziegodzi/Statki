@@ -65,7 +65,7 @@ while run:
                 run = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 choice = "settings"
-                settings.prechoice = "setShips"
+                settings.menu_buttons[3]["function"] = "setShips"
             
     if choice == "game_screen":
         game.use_draw()
@@ -74,7 +74,7 @@ while run:
                 run = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 choice = "settings"
-                settings.prechoice = "game_screen"
+                settings.menu_buttons[3]["function"] = "game_screen"
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Left mouse button
                     if game.legend_button.but_rect.collidepoint(pygame.mouse.get_pos()):
@@ -82,6 +82,7 @@ while run:
                         settings.prechoice = "game_screen"
                     if game.settings_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                         choice = "settings"
+                        settings.menu_buttons[3]["function"] = "game_screen"
                     if game.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                         choice = "quit_game"
     if choice == "settings":
@@ -99,9 +100,7 @@ while run:
                             for t in settings.menu_buttons:
                                 if t["text"] == b.text:
                                     choice = t["function"]
-                                    if t["text"] == "Wznów grę":
-                                        choice = settings.prechoice
-                                    if t["text"] == "game_legend":
+                                    if t["text"] == "Legenda":
                                         settings.prechoice = "settings"
             if pygame.mouse.get_pressed()[0] and settings.volumeMusicSlider.conteiner_rect.collidepoint(pygame.mouse.get_pos()):
                 settings.volumeMusicSlider.move_slider(screen,pygame.mouse.get_pos())
