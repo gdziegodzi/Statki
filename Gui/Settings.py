@@ -7,8 +7,9 @@ SCREEN_HEIGHT = 1080
 pygame.init()
 
 class settings():
-    def __init__(self,s):
+    def __init__(self,s,pre,vol1,vol2):
         self.screen = s
+        self.prechoice = pre
 
         self.background_colour = (200, 232, 232)
         self.fontcolor = (19, 38, 87)
@@ -17,16 +18,10 @@ class settings():
         #volume sliders
         self.slidersWidth = 600
         self.slidersHeight = 40
-        self.volumeMusic = 0.20
+        self.volumeMusic = vol1
         self.volumeMusicSlider = pu.slider((255,125,0),(SCREEN_WIDTH - self.slidersWidth) / 2,SCREEN_HEIGHT - 300,self.slidersWidth,self.slidersHeight,self.volumeMusic,0,1)
-        self.volumeEffects = 0.20
+        self.volumeEffects = vol2
         self.volumeEffectsSlider = pu.slider((255,125,0),(SCREEN_WIDTH - self.slidersWidth) / 2,SCREEN_HEIGHT - 200,self.slidersWidth,self.slidersHeight,self.volumeEffects,0,1)
-
-        # Dźwiek gry
-        # pygame.mixer.init()
-        # mixer.music.load('background.mp3')
-        # mixer.music.play(-1)
-        # mixer.music.set_volume(self.volumeMusic)
 
         # Przycisiki
 
@@ -35,8 +30,7 @@ class settings():
             {"text": "Opuść grę", "function": "quit_game"},
             {"text": "Wróć do Menu", "function": "main_menu"},
             {"text": "Legenda", "function": "game_legend"},
-            {"text": "Wzów grę", "function": "game"}
-            
+            {"text": "Wznów grę", "function": "game_screen"}
             
         ]
             # atrybuty przycisków
@@ -50,7 +44,13 @@ class settings():
         self.buttons_y = (SCREEN_HEIGHT - 370)
         self.buttons_spacing =self.buttons_height + 30
 
-
+        self.tab_but = []
+        a = 0
+        for i in self.menu_buttons:
+            a +=1
+            but = pu.button(self.button_color,self.buttons_x,self.buttons_y - (a*self.buttons_spacing),self.buttons_width,self.buttons_height,
+            i["text"], self.button_text_color, self.button_font, self.buttons_font_size)
+            self.tab_but.append(but)
 
     def Draw_Settings(self):
         settings_title_font = pygame.font.SysFont("Comics Sans", 130)
@@ -68,10 +68,8 @@ class settings():
 
         #buttons drawing
         a = 0
-        for i in self.menu_buttons:
+        for but in self.tab_but:
             a +=1
-            but = pu.button(self.button_color,self.buttons_x,self.buttons_y - (a*self.buttons_spacing),self.buttons_width,self.buttons_height,
-            i["text"], (255, 255, 255), self.button_font, self.buttons_font_size)
             #podświetlanie przycisku
             if but.but_rect.collidepoint(pygame.mouse.get_pos()):
                 but.color = (100, 50, 50)

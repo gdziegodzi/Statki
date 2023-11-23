@@ -59,6 +59,15 @@ class page_custom():
         self.settings_button_font = pygame.font.SysFont("monospace", self.settings_button_font_size, bold=True)
         self.settings_button_text = self.settings_button_font.render("Głośność", 1, (255, 255, 255))
 
+        #Board tab
+        for x in range(0,4):
+            self.BoardSize.append((pu.checkbox((110,0,0), 115 + (x*200), 120, 30, 30)))
+
+        #Checkbox tab
+        for j in range (0,4):
+            for i in range (0,9):
+                self.Ships[j].append((pu.checkbox((0,0,0), 130+(i*100), 380+(j*150), 30, 30)))
+
     def Custom_page_draw(self):
 
         self.screen.fill((200, 232, 232))
@@ -86,7 +95,6 @@ class page_custom():
 
         #Board Button overlay 
         for x in range(0,4):
-            self.BoardSize.append((pu.checkbox((110,0,0), 115 + (x*200), 120, 30, 30)))
             self.BoardSize[x].draw(self.screen)
 
         # but_tab.append(BoardSize1)
@@ -117,12 +125,11 @@ class page_custom():
         self.screen.blit(text, (130,770))
 
 
+        #Checkbox draw
         for j in range (0,4):
             for i in range (0,9):
                 text = self.fonth2.render(str(i), False, (0,0,0))
                 self.screen.blit(text, (135+(i*100),410+(j*150)))
-        #self.Ships Button overlay 
-                self.Ships[j].append((pu.checkbox((0,0,0), 130+(i*100), 380+(j*150), 30, 30)))
                 self.Ships[j][i].draw(self.screen)
 
 

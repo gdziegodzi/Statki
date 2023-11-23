@@ -98,7 +98,7 @@ class slider():
 
         self.value = self.width * ((value/ self.max - self.min) + self.min)
         self.conteiner_rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.button_rect = pygame.Rect(self.x + self.value , self.y, self.height, self.height)
+        self.button_rect = pygame.Rect(self.x + self.value - (self.height/2), self.y, self.height, self.height)
 
     def move_slider(self, screen, mpos):
         self.button_rect.centerx = mpos[0]

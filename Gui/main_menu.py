@@ -1,12 +1,12 @@
 import pygame
-# import Pygame_Util as pu
+import Gui.Pygame_Util as pu
 from pygame import mixer
 
 pygame.init()
-SCREEN_WIDTH = 1920
-SCREEN_HEIGHT = 1080
 class main_menu():
     def __init__(self,s):
+        self.SCREEN_WIDTH = s.get_width()
+        self.SCREEN_HEIGHT = s.get_height()
         self.screen = s
         # pygame.mixer.init()
         # # mixer.music.load('startButton.mp3')
@@ -20,6 +20,7 @@ class main_menu():
         # Colors
         self.background_color = (200, 232, 232)
         self.button_color = (38, 38, 37)
+        self.button_color_hover = (100, 50, 50)
         self.button_text_color = (255, 255, 255)
         self.menu_lettering = (19, 38, 87)
 
@@ -29,107 +30,62 @@ class main_menu():
         self.title_font = pygame.font.SysFont("Comics Sans", self.title_font_size, bold=True)
         self.font = pygame.font.SysFont("Comics Sans", self.button_font_size, bold=False)
 
-        # Menu buttons
+        # Menu buttons text
         self.menu_buttons = [
-            {"text": "Rozpocznij Grę", "function": "start_game"},
-            {"text": "Opcje", "function": "options"},
+            {"text": "Rozpocznij Grę", "function": "setShips"},
+            {"text": "Opcje", "function": "custom"},
             {"text": "Tablica Wyników", "function": "scoreboard"},
             {"text": "Opuść grę", "function": "quit_game"}
         ]
+        
+        # Buttons atribute
+        self.button_font = "Comics Sans"
+        self.button_font_size = 40
+        self.button_height = 100
+        self.button_spacing = 40
+        self.total_button_height = (self.button_height + self.button_spacing) * len(self.menu_buttons)
+        self.button_y = (self.SCREEN_HEIGHT - self.total_button_height) // 2
+        self.button_width = 300
+        self.button_x = (self.SCREEN_WIDTH - self.button_width) // 2
 
+        # Table buttons
+        self.tab_but = []
+        a = 0
+        for button in self.menu_buttons:
+            
+            b = pu.button(self.button_color,self.button_x,self.button_y + (a*(self.button_height + self.button_spacing)),self.button_width,self.button_height,button["text"],
+                          self.button_text_color, self.button_font, self.button_font_size)
+            self.tab_but.append(b)
+            a+=1
+            
         # Function to draw the game interface
+
+        # Title
+        self.title_text = pygame.font.SysFont("Arial", self.title_font_size, bold=True)
+        self.title_text = self.title_text.render("Gra w statki", 1, self.menu_lettering)
+        self.title_x = (self.SCREEN_WIDTH - self.title_text.get_width()) // 2
+        self.title_y = 50  # Adjust the vertical position of the title
     def draw_main_menu(self):
         self.screen.fill(self.background_color)
 
         # Draw title
-        title_text = pygame.font.SysFont("Arial", self.title_font_size, bold=True)
-        title_text = title_text.render("Gra w statki", 1, self.menu_lettering)
-        title_x = (SCREEN_WIDTH - title_text.get_width()) // 2
-        title_y = 50  # Adjust the vertical position of the title
-        self.screen.blit(title_text, (title_x, title_y))
-
-        # Draw buttons
-        button_height = 100
-        button_spacing = 40
-        total_button_height = (button_height + button_spacing) * len(self.menu_buttons)
-        button_y = (SCREEN_HEIGHT - total_button_height) // 2
-
-        for i, button in enumerate(self.menu_buttons):
-            button_text = self.font.render(button["text"], 1, self.button_text_color)
-            button_width = 300
-            button_x = (SCREEN_WIDTH - button_width) // 2
-
-            button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
-
-            # Check if the mouse is over the button
-            if button_rect.collidepoint(pygame.mouse.get_pos()):
-                pygame.draw.rect(self.screen,(0, 0, 0), pygame.Rect(button_x-5,button_y-5,button_width+10, button_height+10))
-                pygame.draw.rect(self.screen, (100, 50, 50), button_rect)
-            else:
-                pygame.draw.rect(self.screen, self.button_color, button_rect)
-
-            text_x = button_rect.centerx - button_text.get_width() // 2
-            text_y = button_rect.centery - button_text.get_height() // 2
-
-            self.screen.blit(button_text, (text_x, text_y))
-
-            button_y += button_height + button_spacing
-
-        # Function to start a new game
-    def start_game(self):
-        # Call the code from the previous program, e.g., the function draw_boards()
-        #draw_boards()
-        mixer.music.play()
-        pygame.time.delay(1200)
-        pygame.quit()
+        self.screen.blit(self.title_text, (self.title_x, self.title_y))
+        a = 0
+        for b in self.tab_but:
             
-
-        # Function to display options
-    def options(self):
-        # Call the code from the previous program, e.g., the function Custom_page_draw()
-        #Custom_page_draw()
-        mixer.music.play()
-        pygame.time.delay(1200)
-        pygame.quit()
-
-        # Function to quit the game
-    def quit_game(self):
-        mixer.music.play()
-        pygame.time.delay(1200)
-        pygame.quit()
-
-    def scoreboard(self):
-        mixer.music.play()
-        pygame.time.delay(1200)
-        pygame.quit()
-        quit()
+            # Check if the mouse is over the button
+            if b.but_rect.collidepoint(pygame.mouse.get_pos()):
+                b.color = self.button_color_hover
+                pygame.draw.rect(self.screen,(0, 0, 0), pygame.Rect(self.button_x-5,self.button_y-5+(a*(self.button_spacing+self.button_height)),self.button_width+10, self.button_height+10))
+                b.draw(self.screen)
+            else:
+                b.color = self.button_color
+                b.draw(self.screen)
+            a+=1
+            
     
     def use_draw(self):
         self.draw_main_menu()
-
-    def use_event(self):
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Left mouse button
-                    for i, button in enumerate(self.menu_buttons):
-                        button_width = self.font.render(button["text"], 1, self.button_text_color).get_width() + 20
-                        button_height = 100
-                        button_spacing = 40
-                        button_x = (SCREEN_WIDTH - button_width) // 2
-                        button_y = (SCREEN_HEIGHT - ((button_height + button_spacing) * len(self.menu_buttons))) // 2 + (
-                                i * (button_height + button_spacing))
-
-                        if button_x < event.pos[0] < button_x + button_width and \
-                                button_y < event.pos[1] < button_y + button_height:
-                            if button["function"] == "start_game":
-                                self.start_game()
-                            elif button["function"] == "options":
-                                self.options()
-                            elif button["function"] == "scoreboard":
-                                self.scoreboard()
-                            elif button["function"] == "quit_game":
-                                self.quit_game()
-
         
         # Main game loop
         # run = True
