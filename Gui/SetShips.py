@@ -1,8 +1,6 @@
 import pygame
-from pygame import mixer
-import tkinter as tk
-from tkinter import Scale
 import Gui.game_screen as gs
+import Gui.Pygame_Util as pu
 
 
 SCREEN_WIDTH = 1920
@@ -74,33 +72,49 @@ class SetShips():
         self.ships_placement_rectangle = pygame.Rect(
             (self.ships_placement_x, self.ships_placement_y, self.ships_placement_width, self.ships_placement_height))
 
-        # exit button
-        self.exit_button_width = 150
-        self.exit_button_height = 50
-        self.exit_button_x = SCREEN_WIDTH - self.exit_button_width - 10
-        self.exit_button_y = 10
-        self.exit_button_rect = pygame.Rect(
-            (self.exit_button_x, self.exit_button_y, self.exit_button_width, self.exit_button_height))
-        self.exit_button_color = (255, 0, 0)
-        self.exit_button_hover_color = (200, 0, 0)
-        self.exit_button_font_size = 30
-        self.exit_button_font = pygame.font.SysFont("monospace", self.exit_button_font_size, bold=True)
-        self.exit_button_text = self.exit_button_font.render("Wyjście", 1, (255, 255, 255))
-        # exit_sound = pygame.mixer.Sound('button.mp3')
+
 
         # confirm button
-        self.confirm_button_width = 180
-        self.confirm_button_height = 50
-        self.confirm_button_x = self.ships_placement_x + (self.ships_placement_width - self.confirm_button_width) // 2
+        self.confirm_button_x = self.ships_placement_x + (self.ships_placement_width - 180) // 2
         self.confirm_button_y = self.ships_placement_y + self.ships_placement_height - 64
-        self.confirm_button_rect = pygame.Rect(
-            (self.confirm_button_x, self.confirm_button_y, self.confirm_button_width, self.confirm_button_height))
         self.confirm_button_color = (0, 255, 0)
         self.confirm_button_hover_color = (0, 200, 0)
-        self.confirm_button_font_size = 30
-        self.confirm_button_font = pygame.font.SysFont("monospace", self.confirm_button_font_size, bold=True)
-        self.confirm_button_text = self.confirm_button_font.render("Zatwierdź", 1, (255, 255, 255))
-        self.confirm_button_clicked = False
+        self.confirm_button = pu.button(self.confirm_button_color,self.confirm_button_x,self.confirm_button_y,180,50,"Zatwierdź",(255, 255, 255),"monospace",30,True)
+
+        # exit button
+        self.exit_button_color = (200, 0, 0)
+        self.exit_button_hover_color = (150, 0, 0)
+        self.exit_button = pu.button(self.exit_button_color,SCREEN_WIDTH - 60,10,50,50,"X",(0,0,0),"monospace",30)
+
+        # settings button
+        self.settings_button_color = (128, 128, 128)
+        self.settings_button_hover_color = (128, 128, 200)
+        self.settings_button = pu.button(self.settings_button_color,SCREEN_WIDTH - 220,10,150,50,"Settings",(0,0,0),"monospace",30)
+
+    def draw_exit_button(self):
+        self.exit_button.draw(self.screen)
+
+        if self.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+            self.exit_button.color = self.exit_button_hover_color
+        else:
+            self.exit_button.color = self.exit_button_color
+    def draw_settings_button(self):
+
+        self.settings_button.draw(self.screen)
+
+        if self.settings_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+            self.settings_button.color = self.settings_button_hover_color
+        else:
+            self.settings_button.color = self.settings_button_color
+
+    
+    def draw_confirm_button(self):
+        self.confirm_button.draw(self.screen)
+
+        if self.confirm_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+            self.confirm_button.color = self.confirm_button_hover_color
+        else:
+            self.confirm_button.color = self.confirm_button_color 
 
     def draw_title_text(self):
         self.screen.blit(self.title_text, self.text_rect)
@@ -113,7 +127,7 @@ class SetShips():
                          pygame.Rect(self.ships_placement_x-5, self.ships_placement_y-5, self.ships_placement_width+10, self.ships_placement_height+10))
         pygame.draw.rect(self.screen,self.ships_placement,self.ships_placement_rectangle)
         self.draw_ship_placement_text()
-
+    
 
     def prepare_board(self, game_board, tile_size, hide_ships=False):
         tile_border_size = 1
@@ -171,23 +185,7 @@ class SetShips():
         for col in range(self.game_board_cols):
             text = font.render(str(col + 1), 1, text_color)
             self.screen.blit(text, (start_x + col * tile_size + offset, start_y - tile_size))
-
-# Ta funkcja jest do usuniecia, tylko info :)-------------------------
-
-    def draw_confirm_button(self):
-        pygame.draw.rect(self.screen, self.confirm_button_color, self.confirm_button_rect)
-
-        if self.confirm_button_rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(self.screen, self.confirm_button_hover_color, self.confirm_button_rect)
-
-        self.screen.blit(self.confirm_button_text, (self.confirm_button_x + 10, self.confirm_button_y + 10))
-
-    def check_confirm_button_click(self):
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        if self.confirm_button_rect.collidepoint(mouse_x, mouse_y) and pygame.mouse.get_pressed()[0]:
-            self.confirm_button_clicked = True
-        else:
-            self.confirm_button_clicked = False
+# Box na statki
     def draw_ship_placement_text(self):
         text_color = (0, 0, 0)
         font_size = 40
@@ -205,7 +203,6 @@ class SetShips():
 
         self.screen.blit(text2, (text_x, text_y))
 
-# Az dotąd mozna usunąć -----------------------------------------------
     def draw_boards(self):
         start_x = 125
         start_y = 250
@@ -220,14 +217,6 @@ class SetShips():
         self.screen.blit(board, (start_x, start_y))
 
 
-    def draw_exit_button(self):
-        pygame.draw.rect(self.screen, self.exit_button_color, self.exit_button_rect)
-
-        if self.exit_button_rect.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(self.screen, self.exit_button_hover_color, self.exit_button_rect)
-
-        self.screen.blit(self.exit_button_text, (self.exit_button_x + 10, self.exit_button_y + 10))
-
     def draw_bottom_ui(self):
         pygame.draw.rect(self.screen, self.bottom_ui_bg_color,
                          (self.bottom_ui_bg_x, self.bottom_ui_bg_y, self.bottom_ui_bg_width, self.bottom_ui_bg_height))
@@ -239,6 +228,8 @@ class SetShips():
         self.draw_bottom_ui()
         self.draw_ship_placement()
         self.draw_confirm_button()
+        self.draw_settings_button()
+        self.draw_exit_button()
 
 
 

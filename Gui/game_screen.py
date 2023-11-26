@@ -250,18 +250,21 @@ class game_screen():
         pygame.draw.rect(self.screen, self.bottom_ui_bg_color,
                          (self.bottom_ui_bg_x, self.bottom_ui_bg_y, self.bottom_ui_bg_width, self.bottom_ui_bg_height))
 
-    def draw_timer(self):
-        # in ms
-        current_time = pygame.time.get_ticks() - self.start_time
+    #TODO
+    #Przerobic działanie czasu - były zalezne od zmiennych których już nie używamy
 
-        hours = str(current_time // 3600_000).zfill(2)
-        minutes = str((current_time // 60_000) % 60).zfill(2)
-        seconds = str((current_time // 1_000) % 60).zfill(2)
+    # def draw_timer(self):
+    #     # in ms
+    #     current_time = pygame.time.get_ticks() - self.start_time
 
-        timer_text = self.exit_button_font.render(f"{hours}:{minutes}:{seconds}", 1, self.timer_text_color)
+    #     hours = str(current_time // 3600_000).zfill(2)
+    #     minutes = str((current_time // 60_000) % 60).zfill(2)
+    #     seconds = str((current_time // 1_000) % 60).zfill(2)
 
-        pygame.draw.rect(self.screen, self.timer_color, self.timer_rect)
-        self.screen.blit(timer_text, (self.timer_x + 10, self.timer_y + 10))
+    #     timer_text = self.exit_button_font.render(f"{hours}:{minutes}:{seconds}", 1, self.timer_text_color)
+
+    #     pygame.draw.rect(self.screen, self.timer_color, self.timer_rect)
+    #     self.screen.blit(timer_text, (self.timer_x + 10, self.timer_y + 10))
 
     def use_draw(self):
 
@@ -276,94 +279,6 @@ class game_screen():
     # clock = pygame.time.Clock()
     # start_time = pygame.time.get_ticks()
 
-    # Add the Settings button
-    settings_button_width = 160
-    settings_button_height = 50
-    settings_button_x = SCREEN_WIDTH - settings_button_width - 200
-    settings_button_y = 10  # Adjust the vertical position
-    settings_button_rect = pygame.Rect(
-        (settings_button_x, settings_button_y, settings_button_width, settings_button_height))
-    settings_button_color = (128, 128, 128)  # Green button color
-    settings_button_hover_color = (128, 128, 200)  # Green hover color
-    settings_button_font_size = 30
-    settings_button_font = pygame.font.SysFont("monospace", settings_button_font_size, bold=True)
-    settings_button_text = settings_button_font.render("Głośność", 1, (255, 255, 255))
-
-    # Utworzenie flagi do śledzenia, czy przycisk wyjścia został kliknięty
-    exit_button_clicked = False
-
-    # run = True
-    # show_legend = False
-
-    # draw_title_background()
-    # draw_title_text()
-    # draw_boards()
-    # draw_legend_button(show_legend)
-    # if show_legend:
-    #     draw_legend()
-    # draw_bottom_ui()
-    # while run:
-    #     screen.fill((200, 232, 232))
-
-    #     # title background draw
-    #     draw_title_background()
-
-    #     # title text draw
-    #     draw_title_text()
-
-    #     # draw boards
-    #     draw_boards()
-
-    #     # draw button showing legend
-    #     draw_legend_button(show_legend)
-
-    #     # draw legend
-    #     if show_legend:
-    #         draw_legend()
-
-    #     # draw bottom ui (footer)
-    #     draw_bottom_ui()
-
-    #     # Rysujemy przycisk wyjścia
-    #     pygame.draw.rect(screen, exit_button_color, exit_button_rect)
-    #     pygame.draw.rect(screen, settings_button_color, settings_button_rect)
-    #     if settings_button_rect.collidepoint(pygame.mouse.get_pos()):
-    #         pygame.draw.rect(screen, settings_button_hover_color, settings_button_rect)
-    #     screen.blit(settings_button_text, (settings_button_x + 10, settings_button_y + 10))
-
-    #     if exit_button_rect.collidepoint(pygame.mouse.get_pos()):
-    #         pygame.draw.rect(screen, exit_button_hover_color, exit_button_rect)
-    #     screen.blit(exit_button_text, (exit_button_x + 10, exit_button_y + 10))
-
-    #     # draw exit button
-    #     draw_exit_button()
-
-    #     # draw timer
-    #     draw_timer()
-
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             run = False
-    #         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-    #             run = False
-    #         if event.type == pygame.MOUSEBUTTONDOWN:
-    #             if settings_button_rect.collidepoint(event.pos):
-    #                 show_volume_settings()
-    #             elif exit_button_rect.collidepoint(event.pos):
-    #                 exit_button_clicked = True
-    #             elif legend_button_rect.collidepoint(event.pos):
-    #                 show_legend = not show_legend
-
-    #     if exit_button_clicked:
-    #         mixer.music.stop()
-    #         exit_sound.play()
-    #         pygame.time.delay(3000)
-    #         run = False
-
-    #     pygame.display.flip()
-    #     clock.tick(30)
-
-    # pygame.quit()
     def generate_ship_board(self):
         board = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
 

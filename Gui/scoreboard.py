@@ -23,17 +23,15 @@ class scoreboard():
         #do wyjasnien
         self.fonts = pygame.font.SysFont("arial", 40, bold=True)
 
-        # Przycisk wyjścia
-        self.exit_button_width = 150
-        self.exit_button_height = 50
-        self.exit_button_x = SCREEN_WIDTH - self.exit_button_width - 10
-        self.exit_button_y = 10
-        self.exit_button_rect = pygame.Rect((self.exit_button_x, self.exit_button_y, self.exit_button_width, self.exit_button_height))
-        self.exit_button_color = (255, 0, 0)
-        self.exit_button_hover_color = (200, 0, 0)
-        self.exit_button_font_size = 30
-        self.exit_button_font = pygame.font.SysFont("monospace", self.exit_button_font_size, bold=True)
-        self.exit_button_text = self.exit_button_font.render("Wyjście", 1, (255, 255, 255))
+        # exit button
+        self.exit_button_color = (200, 0, 0)
+        self.exit_button_hover_color = (150, 0, 0)
+        self.exit_button = pu.button(self.exit_button_color,SCREEN_WIDTH - 60,10,50,50,"X",(0,0,0),"monospace",30)
+
+        # menu button
+        self.menu_button_color = (128, 128, 128)
+        self.menu_button_hover_color = (128, 128, 200)
+        self.menu_button = pu.button(self.menu_button_color,SCREEN_WIDTH - 220,10,150,50,"Menu",(0,0,0),"monospace",30)
 
         # Wczytywanie inicjalizacja
         self.file_path = "Gui/nicks.txt"
@@ -76,9 +74,8 @@ class scoreboard():
         self.draw_text(self.title_text,self.font,text_color,self.title_text_x,50)
 
         # rysowanie przycisku wyjścia
-        pygame.draw.rect(self.screen, self.exit_button_color, self.exit_button_rect)
-        self.screen.blit(self.exit_button_text, (self.exit_button_x + (self.exit_button_width / 2 - self.exit_button_text.get_width() / 2),
-                                    self.exit_button_y + (self.exit_button_height / 2 - self.exit_button_text.get_height() / 2)))
+        self.draw_exit_button()
+        self.draw_menu_button()
 
         # rysowanie "wyjasnien"
         self.draw_text("Nazwa",self.fonts, text_color,150, 250)
@@ -99,22 +96,18 @@ class scoreboard():
         for i, line in enumerate(self.lines_score):
             self.draw_text(line, self.fonts, text_color, 950, 300 + i * 2 * 40)
 
+    def draw_exit_button(self):
+        self.exit_button.draw(self.screen)
 
+        if self.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+            self.exit_button.color = self.exit_button_hover_color
+        else:
+            self.exit_button.color = self.exit_button_color
+    
+    def draw_menu_button(self):
+        self.menu_button.draw(self.screen)
 
-        # Uruchomienie gry
-        # run = True
-        # while run:
-            
-
-        
-        # obsluga zdarzen
-            # for event in pygame.event.get():
-            #     if event.type == pygame.QUIT:
-            #         pygame.quit()
-            #         sys.exit()
-            #     elif event.type == pygame.MOUSEBUTTONDOWN:
-            #         if self.exit_button_rect.collidepoint(pygame.mouse.get_pos()):
-            #             pygame.quit()
-            #             sys.exit()
-            # pygame.display.flip()
-        # pygame.quit()
+        if self.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+            self.menu_button.color = self.menu_button_hover_color
+        else:
+            self.menu_button.color = self.menu_button_color

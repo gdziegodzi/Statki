@@ -2,10 +2,9 @@ import pygame
 from pygame import mixer
 
 pygame.mixer.init()
-# click_sound = pygame.mixer.Sound('checkbox.mp3')
 
 class button():
-    def __init__(self, color, x, y, width, height, text="", text_color = (0,0,0), font=None, size=60, outline=0):
+    def __init__(self, color, x, y, width, height, text="", text_color = (0,0,0), font=None, size=60, bold = False, outline=0):
         self.color = color                              # kolor przycisku
         self.x = x                                      # x pos
         self.y = y                                      # y pos
@@ -14,8 +13,9 @@ class button():
         self.text = text                                # teskt na przycisku
         self.text_color = text_color                    # kolor tekstu
         self.size = size                                # wielkość tekstu
-        self.font = pygame.font.SysFont(font, size)     # rodzaj czcionki
+        self.bold = bold                                # pogrubienie
         self.outline = outline                          # szerokość obramowania
+        self.font = pygame.font.SysFont(font, size ,bold)  # rodzaj czcionki
 
         self.but_rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
@@ -78,11 +78,6 @@ class checkbox():
         self.check = not self.check
         self.draw(win)
 
-        # if self.check:
-            # click_sound.play()
-
-    # click_sound = pygame.mixer.Sound('checkbox.mp3')
-
 class slider():
     def __init__(self, color , x, y, width, height, value = 0.0, min = 0.0, max = 100.0, backgroundcolor = (255,255,255), outline=0):
         self.color = color
@@ -99,10 +94,9 @@ class slider():
         self.value = self.width * ((value/ self.max - self.min) + self.min)
         self.conteiner_rect = pygame.Rect(self.x, self.y, self.width, self.height)
         self.button_rect = pygame.Rect(self.x + self.value - (self.height/2), self.y, self.height, self.height)
-
-    def move_slider(self, screen, mpos):
+        
+    def move_slider(self, mpos):
         self.button_rect.centerx = mpos[0]
-        self.draw(screen)
         self.value = (self.button_rect.centerx - self.x) + 1
         
     #draw a slider    
@@ -114,4 +108,8 @@ class slider():
         return (pos[0] > self.x and pos[0] < self.x + self.width and pos[1] > self.y and pos[1] < self.y + self.height)
     #zwraca value
     def get_value(self):
-        return (self.value/self.width - self.min) * (self.max - self.min)   
+        return (self.value/self.width - self.min) * (self.max - self.min)
+    def newButPos(self,val):
+        self.value = self.width * ((val/ self.max - self.min) + self.min)
+        self.button_rect = pygame.Rect(self.x + self.value - (self.height/2), self.y, self.height, self.height)
+

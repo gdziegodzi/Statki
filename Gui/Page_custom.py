@@ -9,55 +9,37 @@ pygame.init()
 pygame.font.init()
 
 class page_custom():
-    def __init__(self,s):
+    def __init__(self,s,vol1,vol2):
         self.screen = s
         self.volume = 0.05
 
-        # pygame.mixer.init()
-        # mixer.music.load('background.mp3')
-        # mixer.music.play(-1)
-        # mixer.music.set_volume(self.volume)
-        #self.volume sliders
         self.fontcolor = (19, 38, 87)
+
+        #Volume SLiders
+
+        self.volumeMusic = vol1
+        self.volumeEffects = vol2
         self.slidersWidth = 600
         self.slidersHeight = 40
-        self.volumeMusic = 0.20
-        self.volumeMusicSlider = pu.slider((255,125,0),(SCREEN_WIDTH - self.slidersWidth) / 2,SCREEN_HEIGHT - 300,self.slidersWidth,self.slidersHeight,self.volumeMusic,0,1)
-        self.volumeEffects = 0.20
-        self.volumeEffectsSlider = pu.slider((255,125,0),(SCREEN_WIDTH - self.slidersWidth) / 2,SCREEN_HEIGHT - 200,self.slidersWidth,self.slidersHeight,self.volumeEffects,0,1)
+        self.volumeMusicSlider = pu.slider((255,125,0),1100 ,SCREEN_HEIGHT - 300,self.slidersWidth,self.slidersHeight,self.volumeMusic,0,1)
+        self.volumeEffectsSlider = pu.slider((255,125,0),1100 ,SCREEN_HEIGHT - 200,self.slidersWidth,self.slidersHeight,self.volumeEffects,0,1)
 
+        #background color
         self.background_colour = (200, 232, 232)
-        self.screen = pygame.display.set_mode((1920, 1080)) 
-        self.screen.fill(self.background_colour) 
 
         # Tab declaration
         self.BoardSize = []
         self.Ships = [[],[],[],[]]
 
         # Inicjalizacja przycisku wyjścia
-        self.exit_button_width = 150
-        self.exit_button_height = 50
-        self.exit_button_x = SCREEN_WIDTH - self.exit_button_width - 10
-        self.exit_button_y = 10
-        self.exit_button_rect = pygame.Rect((self.exit_button_x, self.exit_button_y, self.exit_button_width, self.exit_button_height))
-        self.exit_button_color = (255, 0, 0)
-        self.exit_button_hover_color = (200, 0, 0)
-        self.exit_button_font_size = 30
-        self.exit_button_font = pygame.font.SysFont("monospace", self.exit_button_font_size, bold=True)
-        self.exit_button_text = self.exit_button_font.render("Wyjście", 1, (255, 255, 255))
-        # exit_sound = pygame.mixer.Sound('button.mp3')
+        self.exit_button_color = (200, 0, 0)
+        self.exit_button_hover_color = (150, 0, 0)
+        self.exit_button = pu.button(self.exit_button_color,SCREEN_WIDTH - 60,10,50,50,"X",(0,0,0),"monospace",30)
 
-        # Add the Settings button
-        self.settings_button_width = 160
-        self.settings_button_height = 50
-        self.settings_button_x = SCREEN_WIDTH - self.settings_button_width - 200
-        self.settings_button_y = 10  # Adjust the vertical position
-        self.settings_button_rect = pygame.Rect((self.settings_button_x, self.settings_button_y, self.settings_button_width, self.settings_button_height))
-        self.settings_button_color = (128,128,128)  # Green button color
-        self.settings_button_hover_color = (128,128,200)  # Green hover color
-        self.settings_button_font_size = 30
-        self.settings_button_font = pygame.font.SysFont("monospace", self.settings_button_font_size, bold=True)
-        self.settings_button_text = self.settings_button_font.render("Głośność", 1, (255, 255, 255))
+        # menu button
+        self.menu_button_color = (128, 128, 128)
+        self.menu_button_hover_color = (128, 128, 200)
+        self.menu_button = pu.button(self.menu_button_color,SCREEN_WIDTH - 220,10,150,50,"Menu",(0,0,0),"monospace",30)
 
         #Board tab
         for x in range(0,4):
@@ -70,7 +52,7 @@ class page_custom():
 
     def Custom_page_draw(self):
 
-        self.screen.fill((200, 232, 232))
+        self.screen.fill(self.background_colour)
         self.fonth1 = pygame.font.SysFont("arial.ttf", 70)
         self.fonth2 = pygame.font.SysFont("arial.ttf", 50)
         # fonth3 = pygame.font.SysFont("arial.ttf", 20)
@@ -96,9 +78,6 @@ class page_custom():
         #Board Button overlay 
         for x in range(0,4):
             self.BoardSize[x].draw(self.screen)
-
-        # but_tab.append(BoardSize1)
-
 
         #Board Text overlay 
         text = self.fonth2.render("9x9", False, (0,0,0))
@@ -132,56 +111,36 @@ class page_custom():
                 self.screen.blit(text, (135+(i*100),410+(j*150)))
                 self.Ships[j][i].draw(self.screen)
 
+        #draw exit button
+        self.draw_exit_button()
+        #draw menu button
+        self.draw_menu_button()
 
-        # Update the display using flip 
-        pygame.display.flip()
+
+        #update volume
+        self.volumeMusicSlider.newButPos(self.volumeMusic)
+        self.volumeEffectsSlider.newButPos(self.volumeEffects)
+        
+        #draw sliders
+        self.volumeMusicSlider.draw(self.screen)
+        self.volumeEffectsSlider.draw(self.screen)
+    
+    def draw_exit_button(self):
+        self.exit_button.draw(self.screen)
+
+        if self.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+            self.exit_button.color = self.exit_button_hover_color
+        else:
+            self.exit_button.color = self.exit_button_color
+    
+    def draw_menu_button(self):
+        self.menu_button.draw(self.screen)
+
+        if self.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+            self.menu_button.color = self.menu_button_hover_color
+        else:
+            self.menu_button.color = self.menu_button_color
 
     def use_draw(self):
         self.Custom_page_draw()
-
-        # while running:
-        #     for event in pygame.event.get():
-        #         if event.type == pygame.QUIT:
-        #             running = False
-        #         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-        #             running = False
-        #         if event.type == pygame.MOUSEBUTTONUP:
-        #             # Sprawdź przyciski na planszy i statki
-        #             for b in self.BoardSize:
-        #                 if b.isOver(pygame.mouse.get_pos()):
-        #                     for p in self.BoardSize:
-        #                         if p.isChecked():
-        #                             p.convert(self.screen)
-        #                     b.convert(self.screen)
-        #                     pygame.display.flip()
-        #             for s in self.Ships:
-        #                 for z in s:
-        #                     if z.isOver(pygame.mouse.get_pos()):
-        #                         for d in s:
-        #                             if d.isChecked():
-        #                                 d.convert(self.screen)
-        #                         z.convert(self.screen)
-        #                         pygame.display.flip()
-        #         if event.type == pygame.MOUSEBUTTONDOWN:
-        #             if self.settings_button_rect.collidepoint(event.pos):
-        #                 self.show_volume_settings()
-        #             elif self.exit_button_rect.collidepoint(event.pos):
-        #                 mixer.music.stop()
-        #                 self.exit_sound.play()
-        #                 pygame.time.delay(3000)
-        #                 running = False
-
-        #     # Rysuj przyciski i tekst na ekranie
-        #     pygame.draw.rect(self.screen, self.exit_button_color if not self.exit_button_rect.collidepoint(
-        #         pygame.mouse.get_pos()) else self.exit_button_hover_color, self.exit_button_rect)
-        #     pygame.draw.rect(self.screen, self.settings_button_color if not self.settings_button_rect.collidepoint(
-        #         pygame.mouse.get_pos()) else self.settings_button_hover_color, self.settings_button_rect)
-
-        #     # Tekst na przyciskach
-        #     self.screen.blit(self.settings_button_text, (self.settings_button_x + 10, self.settings_button_y + 10))
-        #     self.screen.blit(self.exit_button_text, (self.exit_button_x + 10, self.exit_button_y + 10))
-
-            # pygame.display.update()
-
-        # Zakończenie gry
-        # pygame.quit()
+ 

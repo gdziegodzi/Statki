@@ -19,20 +19,31 @@ choice = "main_menu"
 volumeMusic = 0.20
 volumeEffects = 0.20
 
+#Muzyka w tle
+pygame.mixer.init()
+mixer.music.load('Sounds/background.mp3')
+mixer.music.play(-1)
+mixer.music.set_volume(volumeMusic)
+
+#Dźwięki
+checkclick = pygame.mixer.Sound("Sounds/checkbox.mp3")
+    #Funkcja do nadpisywania głośności efektów dzwiękowych
+def setVolumeEffects(vol):
+    checkclick.set_volume(vol)
+
+setVolumeEffects(volumeEffects)
 # obiekty stron
 game = gs.game_screen(screen)
 menu = mm.main_menu(screen)
 settings = st.settings(screen,choice,volumeMusic,volumeEffects)
-custom = pc.page_custom(screen)
+custom = pc.page_custom(screen,volumeMusic,volumeEffects)
 scoreboard = sb.scoreboard(screen)
 SetShips = ss.SetShips(screen)
 
 
 
-pygame.mixer.init()
-mixer.music.load('Sounds/background.mp3')
-mixer.music.play(-1)
-mixer.music.set_volume(0.01)
+
+
 
 run = True
 
@@ -57,15 +68,20 @@ while run:
                                         settings.prechoice = "main_menu"
     if choice == "setShips":
         SetShips.use_draw()
-        SetShips.check_confirm_button_click()
-        if SetShips.confirm_button_clicked == True:
-            choice="game_screen"
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 choice = "settings"
                 settings.menu_buttons[3]["function"] = "setShips"
+            if event.type == pygame.MOUSEBUTTONUP:
+                if SetShips.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "quit_game"
+                if SetShips.settings_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "settings"
+                    settings.menu_buttons[3]["function"] = "setShips"
+                if SetShips.confirm_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "game_screen"
             
     if choice == "game_screen":
         game.use_draw()
@@ -86,6 +102,8 @@ while run:
                     if game.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                         choice = "quit_game"
     if choice == "settings":
+        settings.volumeMusic = volumeMusic
+        settings.volumeEffects = volumeEffects
         settings.use_draw()
         mouse = pygame.mouse.get_pressed()
         for event in pygame.event.get():
@@ -103,16 +121,20 @@ while run:
                                     if t["text"] == "Legenda":
                                         settings.prechoice = "settings"
             if pygame.mouse.get_pressed()[0] and settings.volumeMusicSlider.conteiner_rect.collidepoint(pygame.mouse.get_pos()):
-                settings.volumeMusicSlider.move_slider(screen,pygame.mouse.get_pos())
+                settings.volumeMusicSlider.move_slider(pygame.mouse.get_pos())
                 settings.volumeMusicSlider.draw(screen)
-                settings.volumeMusic = settings.volumeMusicSlider.get_value()
-                mixer.music.set_volume(settings.volumeMusic)
+                volumeMusic = settings.volumeMusicSlider.get_value()
+                mixer.music.set_volume(volumeMusic)
             if pygame.mouse.get_pressed()[0] and settings.volumeEffectsSlider.conteiner_rect.collidepoint(pygame.mouse.get_pos()):
-                settings.volumeEffectsSlider.move_slider(screen,pygame.mouse.get_pos())
+                settings.volumeEffectsSlider.move_slider(pygame.mouse.get_pos())
                 settings.volumeEffectsSlider.draw(screen)
-                settings.volumeEffects = settings.volumeEffectsSlider.get_value()
+                volumeEffects = settings.volumeEffectsSlider.get_value()
+                setVolumeEffects(volumeEffects)
+                
         
     if choice == "custom":
+        custom.volumeMusic = volumeMusic
+        custom.volumeEffects = volumeEffects
         custom.use_draw()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -127,6 +149,7 @@ while run:
                             if p.isChecked():
                                 p.convert(custom.screen)
                         b.convert(custom.screen)
+                        checkclick.play()
                         pygame.display.flip()
                 for s in custom.Ships:
                     for z in s:
@@ -135,26 +158,22 @@ while run:
                                 if d.isChecked():
                                     d.convert(custom.screen)
                             z.convert(custom.screen)
+                            checkclick.play()
                             pygame.display.flip()
-                # if event.type == pygame.MOUSEBUTTONDOWN:
-                #     if custom.exit_button_rect.collidepoint(event.pos):
-                #         mixer.music.stop()
-                #         custom.exit_sound.play()
-                #         pygame.time.delay(3000)
-                #         run = False
-
-            # Rysuj przyciski i tekst na ekranie
-            # pygame.draw.rect(custom.screen, custom.exit_button_color if not custom.exit_button_rect.collidepoint(
-            #     pygame.mouse.get_pos()) else custom.exit_button_hover_color, custom.exit_button_rect)
-            # pygame.draw.rect(custom.screen,
-            #                  custom.settings_button_color if not custom.settings_button_rect.collidepoint(
-            #                      pygame.mouse.get_pos()) else custom.settings_button_hover_color,
-            #                  custom.settings_button_rect)
-
-            # Tekst na przyciskach
-            # custom.screen.blit(custom.settings_button_text,
-            #                    (custom.settings_button_x + 10, custom.settings_button_y + 10))
-            # custom.screen.blit(custom.exit_button_text, (custom.exit_button_x + 10, custom.exit_button_y + 10))
+                if custom.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "quit_game"
+                if custom.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "main_menu"
+            if pygame.mouse.get_pressed()[0] and custom.volumeMusicSlider.conteiner_rect.collidepoint(pygame.mouse.get_pos()):
+                custom.volumeMusicSlider.move_slider(pygame.mouse.get_pos())
+                custom.volumeMusicSlider.draw(screen)
+                volumeMusic = custom.volumeMusicSlider.get_value()
+                mixer.music.set_volume(custom.volumeMusic)
+            if pygame.mouse.get_pressed()[0] and custom.volumeEffectsSlider.conteiner_rect.collidepoint(pygame.mouse.get_pos()):
+                custom.volumeEffectsSlider.move_slider(pygame.mouse.get_pos())
+                custom.volumeEffectsSlider.draw(screen)
+                volumeEffects = custom.volumeEffectsSlider.get_value()
+                setVolumeEffects(volumeEffects)
     if choice == "scoreboard":
         scoreboard.use_draw()
         for event in pygame.event.get():
@@ -163,8 +182,10 @@ while run:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 choice = "main_menu"
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if scoreboard.exit_button_rect.collidepoint(pygame.mouse.get_pos()):
-                    run = False
+                if scoreboard.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "quit_game"
+                if scoreboard.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "main_menu"
     if choice == "game_legend":
         game.draw_legend()
         game.legend_button.text = "Powrót"

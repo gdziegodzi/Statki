@@ -78,6 +78,9 @@ class settings():
             else:
                 but.color = self.button_color
                 but.draw(self.screen)
+        #volume update
+        self.volumeMusicSlider.newButPos(self.volumeMusic)
+        self.volumeEffectsSlider.newButPos(self.volumeEffects)
 
         #draw sliders
         self.volumeMusicSlider.draw(self.screen)
