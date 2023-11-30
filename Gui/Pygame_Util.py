@@ -113,3 +113,55 @@ class slider():
         self.value = self.width * ((val/ self.max - self.min) + self.min)
         self.button_rect = pygame.Rect(self.x + self.value - (self.height/2), self.y, self.height, self.height)
 
+class Statek:
+    def __init__(self, dlugosc, polozenie, kierunek):
+        """
+        Inicjalizacja obiektu Statek.
+
+        :param dlugosc: Długość statku (ilość pól, jakie zajmuje na planszy).
+        :param polozenie: Tuple (x, y) reprezentujące początkowe pole statku na planszy.
+        :param kierunek: 'poziomo' lub 'pionowo', określa kierunek, w którym jest ustawiony statek.
+        """
+        self.dlugosc = dlugosc
+        self.polozenie = polozenie
+        self.kierunek = kierunek
+        self.trafione_pola = set()  # Zbiór pól, które zostały trafione
+
+    def zajmowane_pola(self):
+        """
+        Zwraca zbiór pól zajmowanych przez statek na planszy.
+        """
+        pola = set()
+        x, y = self.polozenie
+
+        for i in range(self.dlugosc):
+            if self.kierunek == 'poziomo':
+                pola.add((x + i, y))
+            elif self.kierunek == 'pionowo':
+                pola.add((x, y + i))
+
+        return pola
+
+    def trafienie(self, pole):
+        """
+        Oznacz pole jako trafione przez statek.
+
+        :param pole: Tuple (x, y) reprezentujące pole, które zostało trafione.
+        """
+        self.trafione_pola.add(pole)
+
+    def czy_zatopiony(self):
+        """
+        Sprawdza, czy statek został zatopiony (wszystkie jego części zostały trafione).
+        """
+        return len(self.trafione_pola) == self.dlugosc
+
+
+# Przykład użycia:
+# statek = Statek(dlugosc=3, polozenie=(2, 3), kierunek='poziomo')
+# print(statek.zajmowane_pola())  # Zwróci {(2, 3), (3, 3), (4, 3)}
+# statek.trafienie((3, 3))
+# print(statek.czy_zatopiony())  # Zwróci False
+# statek.trafienie((2, 3))
+# statek.trafienie((4, 3))
+# print(statek.czy_zatopiony())  # Zwróci True
