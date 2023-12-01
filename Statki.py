@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 choice = "main_menu"
 
 # Głośność
-volumeMusic = 0.10
+volumeMusic = 0.05
 volumeEffects = 0.20
 
 #Muzyka w tle

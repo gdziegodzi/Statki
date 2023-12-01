@@ -250,21 +250,18 @@ class game_screen():
         pygame.draw.rect(self.screen, self.bottom_ui_bg_color,
                          (self.bottom_ui_bg_x, self.bottom_ui_bg_y, self.bottom_ui_bg_width, self.bottom_ui_bg_height))
 
-    #TODO
-    #Przerobic działanie czasu - były zalezne od zmiennych których już nie używamy
+    def draw_timer(self):
+        # in ms
+        current_time = pygame.time.get_ticks()
 
-    # def draw_timer(self):
-    #     # in ms
-    #     current_time = pygame.time.get_ticks() - self.start_time
+        hours = str(current_time // 3600000).zfill(2)
+        minutes = str((current_time // 60000) % 60).zfill(2)
+        seconds = str((current_time // 1000) % 60).zfill(2)
 
-    #     hours = str(current_time // 3600_000).zfill(2)
-    #     minutes = str((current_time // 60_000) % 60).zfill(2)
-    #     seconds = str((current_time // 1_000) % 60).zfill(2)
+        timer_text = self.timer_font.render(f"{hours}:{minutes}:{seconds}", 1, self.timer_text_color)
 
-    #     timer_text = self.exit_button_font.render(f"{hours}:{minutes}:{seconds}", 1, self.timer_text_color)
-
-    #     pygame.draw.rect(self.screen, self.timer_color, self.timer_rect)
-    #     self.screen.blit(timer_text, (self.timer_x + 10, self.timer_y + 10))
+        pygame.draw.rect(self.screen, self.timer_color, self.timer_rect)
+        self.screen.blit(timer_text, (self.timer_x + 10, self.timer_y + 10))
 
     def use_draw(self):
 
@@ -275,6 +272,7 @@ class game_screen():
         self.draw_settings_button()
         self.draw_exit_button()
         self.draw_bottom_ui()
+        self.draw_timer()
 
     # clock = pygame.time.Clock()
     # start_time = pygame.time.get_ticks()
