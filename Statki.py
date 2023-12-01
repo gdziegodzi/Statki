@@ -101,6 +101,8 @@ while run:
                     pygame.time.delay(2100)
             
     if choice == "game_screen":
+        game.turn = "player"
+
         game.use_draw()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -126,6 +128,14 @@ while run:
                         choice = "quit_game"
                         startButtonclick.play()
                         pygame.time.delay(2100)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                game.turn = "cpu"
+
+        if game.turn == "cpu":
+            game.cpu_move()
+
+        game.check_end()
+
     if choice == "settings":
         settings.volumeMusic = volumeMusic
         settings.volumeEffects = volumeEffects
