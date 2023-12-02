@@ -25,10 +25,15 @@ class game_screen():
         self.game_board_rows = 10
         self.game_board_cols = 10
 
-        self.game_board_1 = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
+        # self.game_board_1 = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
 
+        # to test board are now generated
+        self.game_board_1 = self.generate_ship_board()
         self.game_board_2 = self.generate_ship_board()
         # --------------------------------------------------------------------------
+
+        self.turn = "player"
+        self.is_end = False
 
         # title background
         self.title_bg_color = (200, 232, 232)
@@ -65,14 +70,13 @@ class game_screen():
         self.bottom_ui_bg_rectangle = pygame.Rect(
             (self.title_bg_x, self.title_bg_y, self.title_bg_width, self.title_bg_height))
 
-        
         # exit button
         self.exit_button_color = (255, 0, 0)
         self.exit_button_hover_color = (150, 0, 0)
         self.exit_button = pu.button(self.exit_button_color,
-                                  SCREEN_WIDTH - 60, 10,
-                                  50, 50 , "X", (255, 255, 255), "monospace", 30
-                                  )
+                                     SCREEN_WIDTH - 60, 10,
+                                     50, 50, "X", (255, 255, 255), "monospace", 30
+                                     )
 
         # timer
         self.timer_width = 150
@@ -89,9 +93,9 @@ class game_screen():
         self.legend_button_color = (0, 200, 0)
         self.legend_button_hover_color = (0, 150, 0)
         self.legend_button = pu.button(self.legend_button_color,
-                                  SCREEN_WIDTH - 220, 10,
-                                  150, 50 , "Legenda", (255, 255, 255), "monospace", 30
-                                  )
+                                       SCREEN_WIDTH - 220, 10,
+                                       150, 50, "Legenda", (255, 255, 255), "monospace", 30
+                                       )
 
         # legend
         self.legend_bg_color = (189, 189, 189)
@@ -102,7 +106,6 @@ class game_screen():
         self.legend_bg_rectangle = pygame.Rect(
             (self.legend_bg_x, self.legend_bg_y, self.legend_bg_width, self.legend_bg_height))
         self.show_legend = True
-        
 
         # legend text
         self.legend_text_color = (0, 0, 0)
@@ -115,25 +118,34 @@ class game_screen():
         self.legend_text_left_margin = 75
 
         self.legend_texts = ["- puste miejsce / niesprawdzone miejsce",
-                        "- statek",
-                        "- trafiony statek",
-                        "- pudło / miejsce w którym na pewno nie ma statku"]
+                             "- statek",
+                             "- trafiony statek",
+                             "- pudło / miejsce w którym na pewno nie ma statku"]
 
         self.legend_rendered_texts = [self.legend_font.render(self.legend_texts[0], 1, self.legend_text_color),
-                                 self.legend_font.render(self.legend_texts[1], 1, self.legend_text_color),
-                                 self.legend_font.render(self.legend_texts[2], 1, self.legend_text_color),
-                                 self.legend_font.render(self.legend_texts[3], 1, self.legend_text_color)]
+                                      self.legend_font.render(self.legend_texts[1], 1, self.legend_text_color),
+                                      self.legend_font.render(self.legend_texts[2], 1, self.legend_text_color),
+                                      self.legend_font.render(self.legend_texts[3], 1, self.legend_text_color)]
         # legend ships
         self.board_colors = [self.tile_color_empty, self.tile_color_ship, self.tile_color_shotted_ship,
-                        self.tile_color_shotted_empty]
-        
+                             self.tile_color_shotted_empty]
+
         # Settings button
         self.settings_button_color = (128, 128, 128)
         self.settings_button_hover_color = (128, 128, 200)
         self.settings_button = pu.button(self.settings_button_color,
-                                  SCREEN_WIDTH - 380, 10,
-                                  150, 50 , "Settings", (255, 255, 255), "monospace", 30
-                                  )
+                                         SCREEN_WIDTH - 380, 10,
+                                         150, 50, "Settings", (255, 255, 255), "monospace", 30
+                                         )
+
+        # winner
+        self.winner_bg_color = (200, 232, 232)
+        self.winner_bg_width = 400
+        self.winner_bg_height = 75
+        self.winner_bg_x = (SCREEN_WIDTH // 2) - (self.winner_bg_width // 2)
+        self.winner_bg_y = 950
+        self.winner_bg_rectangle = pygame.Rect(
+            (self.winner_bg_x, self.winner_bg_y, self.winner_bg_width, self.winner_bg_height))
 
     def draw_title_text(self):
         self.screen.blit(self.title_text, self.text_rect)
@@ -215,9 +227,9 @@ class game_screen():
             self.legend_button.color = self.legend_button_hover_color
         else:
             self.legend_button.color = self.legend_button_color
-        
+
     def draw_legend(self):
-        
+
         pygame.draw.rect(self.screen, self.legend_bg_color, self.legend_bg_rectangle)
 
         for i in range(4):
@@ -237,6 +249,7 @@ class game_screen():
             self.exit_button.color = self.exit_button_hover_color
         else:
             self.exit_button.color = self.exit_button_color
+
     def draw_settings_button(self):
 
         self.settings_button.draw(self.screen)
@@ -263,6 +276,24 @@ class game_screen():
         pygame.draw.rect(self.screen, self.timer_color, self.timer_rect)
         self.screen.blit(timer_text, (self.timer_x + 10, self.timer_y + 10))
 
+    def draw_winner(self):
+        # winner
+        winner_text_string = ""
+        if self.is_end:
+            if self.turn == "player":
+                winner_text_string = "Komputer zwyciężył"
+            else:
+                winner_text_string = "Wygrałeś"
+
+            winner_text_color = (19, 38, 87)
+            winner_font_size = 50
+            winner_font = pygame.font.SysFont("monospace", winner_font_size, bold=True)
+            winner_text = winner_font.render(winner_text_string, 1, winner_text_color)
+            winner_rect = winner_text.get_rect(center=self.winner_bg_rectangle.center)
+
+            pygame.draw.rect(self.screen, self.winner_bg_color, self.winner_bg_rectangle)
+            self.screen.blit(winner_text, winner_rect)
+
     def use_draw(self):
 
         self.draw_title_background()
@@ -273,6 +304,8 @@ class game_screen():
         self.draw_exit_button()
         self.draw_bottom_ui()
         self.draw_timer()
+
+        self.draw_winner()
 
     # clock = pygame.time.Clock()
     # start_time = pygame.time.get_ticks()
@@ -344,17 +377,11 @@ class game_screen():
                     for j in range(ship_len):
                         board[r + j][c] = "S"
 
-        # TODO delete after develop
-        # draw board for simple test
-        for r in range(self.game_board_rows):
-            print(board[r])
-        print()
-            
         for r in range(self.game_board_rows):
             for c in range(self.game_board_cols):
                 if board[r][c] == ".":
                     board[r][c] = " "
-            
+
         # TODO delete after develop
         # draw board after preparing
         for r in range(self.game_board_rows):
@@ -362,3 +389,30 @@ class game_screen():
         print()
 
         return board
+
+    def cpu_move(self):
+        r, c = None, None
+
+        possible_shoot = False
+        while not possible_shoot:
+            r = random.randint(0, self.game_board_rows - 1)
+            c = random.randint(0, self.game_board_cols - 1)
+
+            if self.game_board_1[r][c] != "." and self.game_board_1[r][c] != "X":
+                possible_shoot = True
+
+        # simple shooting mechanic
+        if self.game_board_1[r][c] == "S":
+            self.game_board_1[r][c] = "X"
+        elif self.game_board_1[r][c] == " ":
+            self.game_board_1[r][c] = "."
+
+    def check_end(self):
+        if not any("S" in s for s in self.game_board_1):
+            self.is_end = True
+
+        elif not any("S" in s for s in self.game_board_2):
+            self.is_end = True
+
+        else:
+            self.is_end = False
