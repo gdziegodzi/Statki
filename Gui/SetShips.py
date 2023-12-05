@@ -75,7 +75,7 @@ class SetShips():
 
 
         # confirm button
-        self.confirm_button_x = self.ships_placement_x + (self.ships_placement_width - 180) // 2
+        self.confirm_button_x = self.ships_placement_x + (self.ships_placement_width - 180) // 2 + 150
         self.confirm_button_y = self.ships_placement_y + self.ships_placement_height - 64
         self.confirm_button_color = (0, 255, 0)
         self.confirm_button_hover_color = (0, 200, 0)
@@ -84,24 +84,29 @@ class SetShips():
         # exit button
         self.exit_button_color = (200, 0, 0)
         self.exit_button_hover_color = (150, 0, 0)
-        self.exit_button = pu.button(self.exit_button_color,SCREEN_WIDTH - 60,10,50,50,"X",(0,0,0),"monospace",30)
+        self.exit_button = pu.button(self.exit_button_color,SCREEN_WIDTH - 60,10,50,50,"X",(255, 255, 255),"monospace",30)
 
         # settings button
         self.settings_button_color = (128, 128, 128)
         self.settings_button_hover_color = (128, 128, 200)
-        self.settings_button = pu.button(self.settings_button_color,SCREEN_WIDTH - 220,10,150,50,"Settings",(0,0,0),"monospace",30)
+        self.settings_button = pu.button(self.settings_button_color,SCREEN_WIDTH - 270,10,200,50,"Ustawienia",(255, 255, 255),"monospace",30)
+
+        # reset button
+        self.reset_button_x = self.ships_placement_x + (self.ships_placement_width - 180) // 2 - 150
+        self.reset_button_y = self.ships_placement_y + self.ships_placement_height - 64
+        self.reset_button_color = (200, 0, 0)
+        self.reset_button_hover_color = (150, 0, 0)
+        self.reset_button = pu.button(self.reset_button_color,self.reset_button_x,self.reset_button_y,180,50,"Resetuj",(255, 255, 255),"monospace",30,True)
 
         # Symboliczne statki w formie przycisków
             # Ilość statków
-        ships_one = 4
-        ships_two = 3
-        ships_three = 2
-        ships_four = 2
-        self.tab_number_of_ship =[ships_one,ships_two,ships_three,ships_four]
+        self.tab_number_of_ship = []
+        self.set_ships_number(4,3,2,2)
+        
         self.font_number_ship = pygame.font.SysFont("monospace", 20, bold=True)
         self.chosen_ship = 0
         self.rotation = 'v'
-            # Tablica z wizualnymi statkami
+        # Tablica z wizualnymi statkami
         self.but_show_ship = []
         self.tile_size = 650//self.game_board_rows
         self.tile_color= (140, 70, 20)
@@ -110,13 +115,34 @@ class SetShips():
             butship = pu.button(self.tile_color, self.ships_placement_x + 50 + i *(self.tile_size + 100),
                 self.ships_placement_y + 100,self.tile_size,self.tile_size+(self.tile_size*i))
             self.but_show_ship.append(butship)
-            # Tablica na której rozmieścimy statki
-        self.board_content = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
-            # Tablica na której rozmieścimy kolizje statków
-        self.board_rect = [[pygame.Rect(0,0,0,0) for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
-            # Tablica do późniejszego przechowywania statków
-        self.but_ships = []
         
+        # Tablica na której rozmieścimy kolizje statków
+        self.board_rect = [[pygame.Rect(0,0,0,0) for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
+
+        start_x = 125
+        start_y = 250
+        self.tile_border_size = 1
+        
+        self.prepare_board(start_x,start_y)
+        
+        # Tablica do późniejszego przechowywania statków
+        self.but_ships = []
+
+        # Zmienna do okrerślania czy wszystkie statki są położone
+        self.all_ships_placed = False
+    def prepare_board(self,start_x,start_y):
+        self.board = pygame.Surface(
+            (self.tile_size * self.game_board_cols + 4 * self.tile_border_size,
+             self.tile_size * self.game_board_rows + 4 * self.tile_border_size))
+        for row in range(self.game_board_rows):
+            for col in range(self.game_board_cols):
+                rect = pygame.Rect(
+                    row * self.tile_size + self.tile_border_size + start_x,
+                    col * self.tile_size + self.tile_border_size + start_y,
+                    self.tile_size - 2 * self.tile_border_size,
+                    self.tile_size - 2 * self.tile_border_size)
+                self.board_rect[row][col] = rect
+
     def toggle_rotation(self):
         if self.rotation == 'h':
             self.rotation = 'v'
@@ -147,6 +173,13 @@ class SetShips():
         else:
             self.confirm_button.color = self.confirm_button_color 
     
+    def draw_reset_button(self):
+        self.reset_button.draw(self.screen)
+        if self.reset_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+            self.reset_button.color = self.reset_button_hover_color
+        else:
+            self.reset_button.color = self.reset_button_color 
+    
     def draw_title_text(self):
         self.screen.blit(self.title_text, self.text_rect)
 
@@ -157,77 +190,23 @@ class SetShips():
         pygame.draw.rect(self.screen,(0,0,0),
                          pygame.Rect(self.ships_placement_x-5, self.ships_placement_y-5, self.ships_placement_width+10, self.ships_placement_height+10))
         pygame.draw.rect(self.screen,self.ships_placement,self.ships_placement_rectangle)
-    
-    # def prepare_board(self, game_board, tile_size, hide_ships=False):
-    #     tile_border_size = 1
 
-    #     # Ustaw pozycję planszy w oknie gry
-    #     start_x = 125
-    #     start_y = 250
-
-    #     for row in range(self.game_board_rows):
-    #         for col in range(self.game_board_cols):
-    #             marker_color = (255, 255, 255)
-
-    #             #Pozycja myszy
-    #             mouse_x, mouse_y = pygame.mouse.get_pos()
-
-    #             mouse_x -= start_x
-    #             mouse_y -= start_y
-
-    #             rect = pygame.Rect(
-    #                 row * tile_size + tile_border_size,
-    #                 col * tile_size + tile_border_size,
-    #                 tile_size - 2 * tile_border_size,
-    #                 tile_size - 2 * tile_border_size)
-
-    #             #Mysz nad kwadratem - hover efekt
-    #             if rect.collidepoint(mouse_x, mouse_y) and self.board_content[row][col] == ' ':
-    #                 marker_color = (200, 200, 200)
-                    
-
-    #             pygame.draw.rect(board, self.tile_color_border,
-    #                              (row * tile_size, col * tile_size, tile_size, tile_size))
-
-    #             pygame.draw.rect(board, marker_color, (
-    #                 row * tile_size + tile_border_size, col * tile_size + tile_border_size,
-    #                 tile_size - 2 * tile_border_size,
-    #                 tile_size - 2 * tile_border_size))
-        # return board
-    def prepare_board(self, game_board, tile_size, hide_ships=False):
-        tile_border_size = 1
-        board = pygame.Surface(
-            (tile_size * self.game_board_cols + 4 * tile_border_size,
-             tile_size * self.game_board_rows + 4 * tile_border_size))
+    def prepare_board_draw(self, game_board, tile_size, hide_ships=False):
+        tile_border_size = self.tile_border_size
+        board = self.board
         
-
-        # Ustaw pozycję planszy w oknie gry
-        start_x = 125
-        start_y = 250
-
         for row in range(self.game_board_rows):
             for col in range(self.game_board_cols):
                 marker_color = (255, 255, 255)
-
-                #Pozycja myszy
-                # mouse_x, mouse_y = pygame.mouse.get_pos()
-
-                # mouse_x -= start_x
-                # mouse_y -= start_y
-
-                rect = pygame.Rect(
-                    row * tile_size + tile_border_size + start_x,
-                    col * tile_size + tile_border_size + start_y,
-                    tile_size - 2 * tile_border_size,
-                    tile_size - 2 * tile_border_size)
-                self.board_rect[row][col] = rect
-
-                #Mysz nad kwadratem - hover efekt
-                if rect.collidepoint(pygame.mouse.get_pos()) and self.board_content[row][col] == ' ':
-                    marker_color = (200, 200, 200)
-                elif self.board_content[row][col] == 'S':
+                
+                if game_board[row][col] == " ":
+                    marker_color = (255, 255, 255)
+                elif game_board[row][col] == "S":
                     marker_color = self.tile_color_ship
-
+                elif game_board[row][col] == "h":
+                    marker_color = (200, 200, 200)
+                    
+                    
                 pygame.draw.rect(board, self.tile_color_border,
                                  (row * tile_size, col * tile_size, tile_size, tile_size))
 
@@ -260,13 +239,13 @@ class SetShips():
         start_y = 250
 
         # rows == columns
-        tile_size = 650 // self.game_board_rows
+        tile_size = self.tile_size
 
         self.draw_axis_description(tile_size, start_x, start_y)
 
-        self.board = self.prepare_board(self.game_board_1, tile_size)
+        board_draw = self.prepare_board_draw(self.game_board_1, tile_size)
 
-        self.screen.blit(self.board, (start_x, start_y))
+        self.screen.blit(board_draw, (start_x, start_y))
 
 
     def draw_bottom_ui(self):
@@ -296,20 +275,23 @@ class SetShips():
         c = y
 
         possible_to_place = True
-        
+        for a,row in enumerate(self.game_board_1):
+            for b,col in enumerate(row):
+                if col == "h":
+                    self.game_board_1[a][b] = " "
         if rotation == "h":
             c_max -= ship_len
         else:
             r_max -= ship_len
-        if self.board_content[r][c] == " ":
+        if self.game_board_1[r][c] == " ":
             if rotation == "v" and c+ship_len<=c_max:
                 for j in range(ship_len):
-                    if self.board_content[r][c + j] != " ":
+                    if self.game_board_1[r][c + j] != " ":
                         possible_to_place = False
                         break
             elif rotation == "h" and r+ship_len<=r_max:
                 for j in range(ship_len):
-                    if self.board_content[r + j][c] != " ":
+                    if self.game_board_1[r + j][c] != " ":
                         possible_to_place = False
                         break
             else:
@@ -321,35 +303,94 @@ class SetShips():
             if rotation == "v":
                 for j in range(-1, ship_len + 1):
                     if 0 <= c + j < self.game_board_cols:
-                        self.board_content[r][c + j] = "."
+                        self.game_board_1[r][c + j] = "."
                         if r + 1 < self.game_board_rows:
-                            self.board_content[r + 1][c + j] = "."
+                            self.game_board_1[r + 1][c + j] = "."
                         if r - 1 >= 0:
-                            self.board_content[r - 1][c + j] = "."
+                            self.game_board_1[r - 1][c + j] = "."
             else:
                 for j in range(-1, ship_len + 1):
                     if 0 <= r + j < self.game_board_rows:
-                        self.board_content[r + j][c] = "."
+                        self.game_board_1[r + j][c] = "."
                         if c + 1 < self.game_board_cols:
-                            self.board_content[r + j][c + 1] = "."
+                            self.game_board_1[r + j][c + 1] = "."
                         if c - 1 >= 0:
-                            self.board_content[r + j][c - 1] = "."
+                            self.game_board_1[r + j][c - 1] = "."
 
         # put ship
         if possible_to_place:
             if rotation == "v":
                 for j in range(ship_len):
-                    self.board_content[r][c + j] = "S"
+                    self.game_board_1[r][c + j] = "S"
             else:
                 for j in range(ship_len):
-                    self.board_content[r + j][c] = "S"
+                    self.game_board_1[r + j][c] = "S"
             self.tab_number_of_ship[self.chosen_ship] -=1
- 
+            for a in self.tab_number_of_ship:
+                self.all_ships_placed = True
+                if a != 0:
+                    self.all_ships_placed = False
+    
     def clear_empty_on_board(self):
         for r in range(self.game_board_rows):
             for c in range(self.game_board_cols):
-                if self.board_content[r][c] == ".":
-                    self.board_content[r][c] = " "
+                if self.game_board_1[r][c] == ".":
+                    self.game_board_1[r][c] = " "
+    
+    def mark_hover_tile(self,x,y):
+        ship_len = self.chosen_ship + 1
+        r_max = self.game_board_rows
+        c_max = self.game_board_cols
+
+        rotation = self.rotation
+        r = x
+        c = y
+        for a,row in enumerate(self.game_board_1):
+            for b,col in enumerate(row):
+                if col == "h":
+                    self.game_board_1[a][b] = " "
+        possible_to_place = True
+        rotation = self.rotation
+        if rotation == "h":
+            c_max -= ship_len
+        else:
+            r_max -= ship_len
+        if self.game_board_1[r][c] == " ":
+            if rotation == "v" and c+ship_len<=c_max:
+                for j in range(ship_len):
+                    if self.game_board_1[r][c + j] != " ":
+                        possible_to_place = False
+                        break
+            elif rotation == "h" and r+ship_len<=r_max:
+                for j in range(ship_len):
+                    if self.game_board_1[r + j][c] != " ":
+                        possible_to_place = False
+                        break
+            else:
+                possible_to_place = False
+        else:
+            possible_to_place = False
+
+        if possible_to_place:
+            if rotation == "v":
+                for j in range(ship_len):
+                    self.game_board_1[r][c + j] = "h"
+            else:
+                for j in range(ship_len):
+                    self.game_board_1[r + j][c] = "h"
+    def reset_board(self):
+
+        for a,row in enumerate(self.game_board_1):
+            for b,col in enumerate(row):
+                self.game_board_1[a][b] = " "
+        
+        self.set_ships_number(4,3,2,2)
+        self.all_ships_placed = False
+    def set_ships_number(self,a,b,c,d):
+
+        self.tab_number_of_ship = [a,b,c,d]
+        
+
     def use_draw(self):
         self.draw_title_background()
         self.draw_title_text()
@@ -359,4 +400,5 @@ class SetShips():
         self.draw_confirm_button()
         self.draw_settings_button()
         self.draw_exit_button()
+        self.draw_reset_button()
         self.draw_numberships()

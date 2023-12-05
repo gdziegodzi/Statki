@@ -83,9 +83,7 @@ while run:
                 settings.menu_buttons[3]["function"] = "setShips"
                 buttonclick.play()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
-                print("r")
                 SetShips.toggle_rotation()
-                print(SetShips.rotation)
             if event.type == pygame.MOUSEBUTTONUP:
                 if SetShips.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "quit_game"
@@ -96,10 +94,13 @@ while run:
                     settings.menu_buttons[3]["function"] = "setShips"
                     buttonclick.play()
                 if SetShips.confirm_button.but_rect.collidepoint(pygame.mouse.get_pos()):
-                    choice = "game_screen"
-                    startButtonclick.play()
-                    SetShips.clear_empty_on_board()
-                    game.game_board_1 = SetShips.board_content
+                    if SetShips.all_ships_placed:
+                        choice = "game_screen"
+                        startButtonclick.play()
+                        SetShips.clear_empty_on_board()
+                        game.game_board_1 = SetShips.game_board_1
+                if SetShips.reset_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    SetShips.reset_board()
                 for i,ship in enumerate(SetShips.but_show_ship):
                     if ship.but_rect.collidepoint(pygame.mouse.get_pos()):
                         SetShips.chosen_ship = i
@@ -107,7 +108,10 @@ while run:
                     for b,rect in enumerate(row):
                         if rect.collidepoint(pygame.mouse.get_pos()) and SetShips.tab_number_of_ship[SetShips.chosen_ship] > 0:
                             SetShips.place_ship_on_board(a,b)
-            
+            for a,row in enumerate(SetShips.board_rect):
+                for b,rect in enumerate(row):
+                    if rect.collidepoint(pygame.mouse.get_pos()):
+                        SetShips.mark_hover_tile(a,b)
     if choice == "game_screen":
         game.turn = "player"
 

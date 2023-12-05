@@ -25,10 +25,10 @@ class game_screen():
         self.game_board_rows = 10
         self.game_board_cols = 10
 
-        # self.game_board_1 = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
+        self.game_board_1 = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
 
         # to test board are now generated
-        self.game_board_1 = self.generate_ship_board()
+        # self.game_board_1 = self.generate_ship_board()
         self.game_board_2 = self.generate_ship_board()
         # --------------------------------------------------------------------------
 
@@ -134,8 +134,8 @@ class game_screen():
         self.settings_button_color = (128, 128, 128)
         self.settings_button_hover_color = (128, 128, 200)
         self.settings_button = pu.button(self.settings_button_color,
-                                         SCREEN_WIDTH - 380, 10,
-                                         150, 50, "Settings", (255, 255, 255), "monospace", 30
+                                         SCREEN_WIDTH - 430, 10,
+                                         200, 50, "Ustawienia", (255, 255, 255), "monospace", 30
                                          )
 
         # winner
