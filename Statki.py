@@ -19,39 +19,37 @@ choice = "main_menu"
 volumeMusic = 0.05
 volumeEffects = 0.20
 
-#Muzyka w tle
+# Muzyka w tle
 pygame.mixer.init()
 mixer.music.load('Sounds/background.mp3')
 mixer.music.play(-1)
 mixer.music.set_volume(volumeMusic)
 
-#Dźwięki
+# Dźwięki
 startButtonclick = pygame.mixer.Sound("Sounds/startButton.mp3")
 checkclick = pygame.mixer.Sound("Sounds/checkbox.mp3")
 buttonclick = pygame.mixer.Sound("Sounds/checkbox.mp3")
 
-#Delays
-delay_leave=2100
+# Delays
+delay_leave = 2100
 
 buttonclick.set_volume(volumeEffects)
-    #Funkcja do nadpisywania głośności efektów dzwiękowych
+
+
+# Funkcja do nadpisywania głośności efektów dzwiękowych
 def setVolumeEffects(vol):
     checkclick.set_volume(vol)
     startButtonclick.set_volume(vol)
+
 
 setVolumeEffects(volumeEffects)
 # obiekty stron
 game = gs.game_screen(screen)
 menu = mm.main_menu(screen)
-settings = st.settings(screen,choice,volumeMusic,volumeEffects)
-custom = pc.page_custom(screen,volumeMusic,volumeEffects)
+settings = st.settings(screen, choice, volumeMusic, volumeEffects)
+custom = pc.page_custom(screen, volumeMusic, volumeEffects)
 scoreboard = sb.scoreboard(screen)
 SetShips = ss.SetShips(screen)
-
-
-
-
-
 
 run = True
 
@@ -102,20 +100,21 @@ while run:
                         game.game_board_1 = SetShips.game_board_1
                 if SetShips.reset_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     SetShips.reset_board()
-                for i,ship in enumerate(SetShips.but_show_ship):
+                for i, ship in enumerate(SetShips.but_show_ship):
                     if ship.but_rect.collidepoint(pygame.mouse.get_pos()):
                         SetShips.chosen_ship = i
-                for a,row in enumerate(SetShips.board_rect):
-                    for b,rect in enumerate(row):
-                        if rect.collidepoint(pygame.mouse.get_pos()) and SetShips.tab_number_of_ship[SetShips.chosen_ship] > 0:
-                            SetShips.place_ship_on_board(a,b)
-            for a,row in enumerate(SetShips.board_rect):
-                for b,rect in enumerate(row):
+                for a, row in enumerate(SetShips.board_rect):
+                    for b, rect in enumerate(row):
+                        if rect.collidepoint(pygame.mouse.get_pos()) and SetShips.tab_number_of_ship[
+                            SetShips.chosen_ship] > 0:
+                            SetShips.place_ship_on_board(a, b)
+            for a, row in enumerate(SetShips.board_rect):
+                for b, rect in enumerate(row):
                     if rect.collidepoint(pygame.mouse.get_pos()):
-                        SetShips.mark_hover_tile(a,b)
+                        SetShips.mark_hover_tile(a, b)
     if choice == "game_screen":
         game.turn = "player"
-
+        game.player_shoot(pygame.mouse.get_pos())
         game.use_draw()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -125,7 +124,7 @@ while run:
                 settings.menu_buttons[3]["function"] = "game_screen"
                 buttonclick.play()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Left mouse button
+                if event.button == 1:
                     if game.legend_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                         choice = "game_legend"
                         settings.prechoice = "game_screen"
@@ -136,13 +135,12 @@ while run:
                         buttonclick.play()
                     if game.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                         choice = "quit_game"
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                game.turn = "cpu"
-
+                        buttonclick.play()
         if game.turn == "cpu":
+            game.use_draw()
             game.cpu_move()
-
         game.check_end()
+
 
     if choice == "settings":
         settings.volumeMusic = volumeMusic
@@ -164,18 +162,19 @@ while run:
                                     buttonclick.play()
                                     if t["text"] == "Legenda":
                                         settings.prechoice = "settings"
-            if pygame.mouse.get_pressed()[0] and settings.volumeMusicSlider.conteiner_rect.collidepoint(pygame.mouse.get_pos()):
+            if pygame.mouse.get_pressed()[0] and settings.volumeMusicSlider.conteiner_rect.collidepoint(
+                    pygame.mouse.get_pos()):
                 settings.volumeMusicSlider.move_slider(pygame.mouse.get_pos())
                 settings.volumeMusicSlider.draw(screen)
                 volumeMusic = settings.volumeMusicSlider.get_value()
                 mixer.music.set_volume(volumeMusic)
-            if pygame.mouse.get_pressed()[0] and settings.volumeEffectsSlider.conteiner_rect.collidepoint(pygame.mouse.get_pos()):
+            if pygame.mouse.get_pressed()[0] and settings.volumeEffectsSlider.conteiner_rect.collidepoint(
+                    pygame.mouse.get_pos()):
                 settings.volumeEffectsSlider.move_slider(pygame.mouse.get_pos())
                 settings.volumeEffectsSlider.draw(screen)
                 volumeEffects = settings.volumeEffectsSlider.get_value()
                 setVolumeEffects(volumeEffects)
-                
-        
+
     if choice == "custom":
         custom.volumeMusic = volumeMusic
         custom.volumeEffects = volumeEffects
@@ -211,12 +210,14 @@ while run:
                 if custom.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "main_menu"
                     buttonclick.play()
-            if pygame.mouse.get_pressed()[0] and custom.volumeMusicSlider.conteiner_rect.collidepoint(pygame.mouse.get_pos()):
+            if pygame.mouse.get_pressed()[0] and custom.volumeMusicSlider.conteiner_rect.collidepoint(
+                    pygame.mouse.get_pos()):
                 custom.volumeMusicSlider.move_slider(pygame.mouse.get_pos())
                 custom.volumeMusicSlider.draw(screen)
                 volumeMusic = custom.volumeMusicSlider.get_value()
                 mixer.music.set_volume(custom.volumeMusic)
-            if pygame.mouse.get_pressed()[0] and custom.volumeEffectsSlider.conteiner_rect.collidepoint(pygame.mouse.get_pos()):
+            if pygame.mouse.get_pressed()[0] and custom.volumeEffectsSlider.conteiner_rect.collidepoint(
+                    pygame.mouse.get_pos()):
                 custom.volumeEffectsSlider.move_slider(pygame.mouse.get_pos())
                 custom.volumeEffectsSlider.draw(screen)
                 volumeEffects = custom.volumeEffectsSlider.get_value()
