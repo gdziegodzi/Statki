@@ -30,6 +30,9 @@ startButtonclick = pygame.mixer.Sound("Sounds/startButton.mp3")
 checkclick = pygame.mixer.Sound("Sounds/checkbox.mp3")
 buttonclick = pygame.mixer.Sound("Sounds/checkbox.mp3")
 
+#Delays
+delay_leave=2100
+
 buttonclick.set_volume(volumeEffects)
     #Funkcja do nadpisywania głośności efektów dzwiękowych
 def setVolumeEffects(vol):
@@ -87,8 +90,6 @@ while run:
             if event.type == pygame.MOUSEBUTTONUP:
                 if SetShips.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "quit_game"
-                    startButtonclick.play()
-                    pygame.time.delay(2100)
                 if SetShips.settings_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "settings"
                     settings.menu_buttons[3]["function"] = "setShips"
@@ -135,8 +136,6 @@ while run:
                         buttonclick.play()
                     if game.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                         choice = "quit_game"
-                        startButtonclick.play()
-                        pygame.time.delay(2100)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game.turn = "cpu"
 
@@ -209,8 +208,6 @@ while run:
                             pygame.display.flip()
                 if custom.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "quit_game"
-                    startButtonclick.play()
-                    pygame.time.delay(2100)
                 if custom.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "main_menu"
                     buttonclick.play()
@@ -235,8 +232,6 @@ while run:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if scoreboard.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "quit_game"
-                    startButtonclick.play()
-                    pygame.time.delay(2100)
                 if scoreboard.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "main_menu"
                     buttonclick.play()
@@ -256,6 +251,8 @@ while run:
                     game.legend_button.text = "Legenda"
                     buttonclick.play()
     if choice == "quit_game":
+        startButtonclick.play()
+        pygame.time.delay(delay_leave)
         run = False
     pygame.display.flip()
 
