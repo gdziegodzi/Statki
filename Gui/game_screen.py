@@ -1,5 +1,6 @@
 import random
 import pygame
+import threading
 from pygame import mixer
 import Gui.Pygame_Util as pu
 
@@ -280,7 +281,7 @@ class game_screen():
         # winner
         winner_text_string = ""
         if self.is_end:
-            if self.turn == "player":
+            if self.turn == "cpu":
                 winner_text_string = "Komputer zwyciężył"
             else:
                 winner_text_string = "Wygrałeś"
@@ -295,7 +296,6 @@ class game_screen():
             self.screen.blit(winner_text, winner_rect)
 
     def use_draw(self):
-
         self.draw_title_background()
         self.draw_title_text()
         self.draw_boards()
@@ -306,6 +306,8 @@ class game_screen():
         self.draw_timer()
 
         self.draw_winner()
+
+
 
     # clock = pygame.time.Clock()
     # start_time = pygame.time.get_ticks()
@@ -391,21 +393,22 @@ class game_screen():
         return board
 
     def cpu_move(self):
-        r, c = None, None
+        def delayed_move():
+            r, c = None, None
+            possible_shoot = False
+            while not possible_shoot:
+                r = random.randint(0, self.game_board_rows - 1)
+                c = random.randint(0, self.game_board_cols - 1)
 
-        possible_shoot = False
-        while not possible_shoot:
-            r = random.randint(0, self.game_board_rows - 1)
-            c = random.randint(0, self.game_board_cols - 1)
+                if self.game_board_1[r][c] != "." and self.game_board_1[r][c] != "X":
+                    possible_shoot = True
 
-            if self.game_board_1[r][c] != "." and self.game_board_1[r][c] != "X":
-                possible_shoot = True
-
-        # simple shooting mechanic
-        if self.game_board_1[r][c] == "S":
-            self.game_board_1[r][c] = "X"
-        elif self.game_board_1[r][c] == " ":
-            self.game_board_1[r][c] = "."
+            if self.game_board_1[r][c] == "S":
+                self.game_board_1[r][c] = "X"
+            elif self.game_board_1[r][c] == " ":
+                self.game_board_1[r][c] = "."
+        thread = threading.Timer(1.0, delayed_move)
+        thread.start()
 
     def check_end(self):
         if not any("S" in s for s in self.game_board_1):
@@ -416,3 +419,28 @@ class game_screen():
 
         else:
             self.is_end = False
+
+    def player_shoot(self, mouse_pos):
+        start_x = 125
+        start_y = 250
+        space_between_boards = 400
+        tile_size = 650 // self.game_board_rows
+
+        relative_mouse_x = mouse_pos[0] - start_x - space_between_boards - 650
+        relative_mouse_y = mouse_pos[1] - start_y
+
+        for event in pygame.event.get():
+            if 0 <= relative_mouse_x < tile_size * self.game_board_cols and 0 <= relative_mouse_y < tile_size * self.game_board_rows and event.type == pygame.MOUSEBUTTONDOWN:
+                row_index = int(relative_mouse_x / tile_size)
+                col_index = int(relative_mouse_y / tile_size)
+
+                if self.game_board_2[row_index][col_index] == "X":
+                    break
+                elif self.game_board_2[row_index][col_index] == ".":
+                    break
+                elif self.game_board_2[row_index][col_index] == "S":
+                    self.game_board_2[row_index][col_index] = "X"
+                elif self.game_board_2[row_index][col_index] != "X":
+                    self.game_board_2[row_index][col_index] = "."
+
+                self.turn="cpu"
