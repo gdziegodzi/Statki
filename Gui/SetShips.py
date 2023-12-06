@@ -326,8 +326,8 @@ class SetShips():
                 for j in range(ship_len):
                     self.game_board_1[r + j][c] = "S"
             self.tab_number_of_ship[self.chosen_ship] -=1
+            self.all_ships_placed = True
             for a in self.tab_number_of_ship:
-                self.all_ships_placed = True
                 if a != 0:
                     self.all_ships_placed = False
     
