@@ -114,7 +114,7 @@ class slider():
         self.button_rect = pygame.Rect(self.x + self.value - (self.height/2), self.y, self.height, self.height)
 
 class Statek:
-    def __init__(self, dlugosc, polozenie, kierunek):
+    def __init__(self, width, location, direction):
         """
         Inicjalizacja obiektu Statek.
 
@@ -122,39 +122,39 @@ class Statek:
         :param polozenie: Tuple (x, y) reprezentujące początkowe pole statku na planszy.
         :param kierunek: 'poziomo' lub 'pionowo', określa kierunek, w którym jest ustawiony statek.
         """
-        self.dlugosc = dlugosc
-        self.polozenie = polozenie
-        self.kierunek = kierunek
-        self.trafione_pola = set()  # Zbiór pól, które zostały trafione
+        self.width = width
+        self.location = location
+        self.direction = direction
+        self.shoot_location = set()  # Zbiór pól, które zostały trafione
 
-    def zajmowane_pola(self):
+    def location(self):
         """
         Zwraca zbiór pól zajmowanych przez statek na planszy.
         """
-        pola = set()
-        x, y = self.polozenie
+        fields = set()
+        x, y = self.location
 
-        for i in range(self.dlugosc):
-            if self.kierunek == 'poziomo':
-                pola.add((x + i, y))
-            elif self.kierunek == 'pionowo':
-                pola.add((x, y + i))
+        for i in range(self.width):
+            if self.direction == 'poziomo':
+                fields.add((x + i, y))
+            elif self.direction == 'pionowo':
+                fields.add((x, y + i))
 
-        return pola
+        return fields
 
-    def trafienie(self, pole):
+    def shot(self, pole):
         """
         Oznacz pole jako trafione przez statek.
 
         :param pole: Tuple (x, y) reprezentujące pole, które zostało trafione.
         """
-        self.trafione_pola.add(pole)
+        self.shoot_location.add(pole)
 
-    def czy_zatopiony(self):
+    def hadItDrown(self):
         """
         Sprawdza, czy statek został zatopiony (wszystkie jego części zostały trafione).
         """
-        return len(self.trafione_pola) == self.dlugosc
+        return len(self.shoot_location) == self.width
 
 
 # Przykład użycia:
