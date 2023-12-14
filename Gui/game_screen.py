@@ -148,6 +148,7 @@ class game_screen():
         self.winner_bg_rectangle = pygame.Rect(
             (self.winner_bg_x, self.winner_bg_y, self.winner_bg_width, self.winner_bg_height))
 
+
     def draw_title_text(self):
         self.screen.blit(self.title_text, self.text_rect)
 
