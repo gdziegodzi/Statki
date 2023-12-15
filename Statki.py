@@ -1,3 +1,5 @@
+import atexit
+
 import pygame
 from pygame import mixer
 import Gui.game_screen as gs
@@ -18,6 +20,14 @@ choice = "main_menu"
 # Głośność
 volumeMusic = 0.05
 volumeEffects = 0.20
+try:
+    with open("Gui/sound.txt", "r") as file:
+        lines = file.readlines()
+        if len(lines) >= 2:
+            volumeMusic = float(lines[0].strip())
+            volumeEffects = float(lines[1].strip())
+except FileNotFoundError:
+    print("Plik sound.txt nie istnieje. Używam domyślnych wartości.")
 
 # Muzyka w tle
 pygame.mixer.init()
@@ -43,6 +53,9 @@ def setVolumeEffects(vol):
 
 
 setVolumeEffects(volumeEffects)
+
+
+
 # obiekty stron
 game = gs.game_screen(screen)
 menu = mm.main_menu(screen)
@@ -52,6 +65,27 @@ scoreboard = sb.scoreboard(screen)
 SetShips = ss.SetShips(screen)
 
 run = True
+
+try:
+    with open("Gui/sound.txt", "r") as file:
+        lines = file.readlines()
+        if len(lines) >= 2:
+            volumeMusic = float(lines[0].strip())
+            volumeEffects = float(lines[1].strip())
+except FileNotFoundError:
+    print("Plik sound.txt nie istnieje. Używam domyślnych wartości.")
+
+def save_game_board_size_to_file(filename, rows, cols):
+    with open(filename, 'w') as file:
+        file.write(f"{rows}\n{cols}")
+def save_ships_number_to_file(filename, number1, number2,number3, number4):
+    with open(filename, 'w') as file:
+        file.write(f"{number1}\n{number2}\n{number3}\n{number4}")
+
+
+# Rejestracja funkcji przy wyjściu z programu
+atexit.register(save_game_board_size_to_file, 'Gui/gameboard.txt', 10, 10)
+atexit.register(save_ships_number_to_file, 'Gui/ships.txt', 4, 3, 2, 2)
 
 while run:
     screen.fill((200, 232, 232))
@@ -73,6 +107,8 @@ while run:
                                     choice = t["function"]
                                     if choice == "settings":
                                         settings.prechoice = "main_menu"
+                                    if choice == "setShips":
+                                        SetShips.set_new_value()
 
     if choice == "setShips":
         SetShips.use_draw()
@@ -209,6 +245,14 @@ while run:
                     choice = "quit_game"
                 if custom.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "main_menu"
+                    buttonclick.play()
+                if custom.play_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    SetShips.set_new_value()
+                    choice = "setShips"
+                    buttonclick.play()
+
+
+
                     buttonclick.play()
             if pygame.mouse.get_pressed()[0] and custom.volumeMusicSlider.conteiner_rect.collidepoint(
                     pygame.mouse.get_pos()):
