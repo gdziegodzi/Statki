@@ -54,8 +54,6 @@ def setVolumeEffects(vol):
 
 setVolumeEffects(volumeEffects)
 
-
-
 # obiekty stron
 game = gs.game_screen(screen)
 menu = mm.main_menu(screen)
@@ -75,10 +73,13 @@ try:
 except FileNotFoundError:
     print("Plik sound.txt nie istnieje. Używam domyślnych wartości.")
 
+
 def save_game_board_size_to_file(filename, rows, cols):
     with open(filename, 'w') as file:
         file.write(f"{rows}\n{cols}")
-def save_ships_number_to_file(filename, number1, number2,number3, number4):
+
+
+def save_ships_number_to_file(filename, number1, number2, number3, number4):
     with open(filename, 'w') as file:
         file.write(f"{number1}\n{number2}\n{number3}\n{number4}")
 
@@ -172,11 +173,12 @@ while run:
                     if game.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                         choice = "quit_game"
                         buttonclick.play()
-        if game.turn == "cpu":
+
+        game.check_end()
+        if game.turn == "cpu" and game.is_end is False:
             game.use_draw()
             game.cpu_move()
         game.check_end()
-
 
     if choice == "settings":
         settings.volumeMusic = volumeMusic
@@ -250,8 +252,6 @@ while run:
                     SetShips.set_new_value()
                     choice = "setShips"
                     buttonclick.play()
-
-
 
                     buttonclick.play()
             if pygame.mouse.get_pressed()[0] and custom.volumeMusicSlider.conteiner_rect.collidepoint(
