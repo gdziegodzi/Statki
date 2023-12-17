@@ -150,8 +150,6 @@ while run:
                     if rect.collidepoint(pygame.mouse.get_pos()):
                         SetShips.mark_hover_tile(a, b)
     if choice == "game_screen":
-        game.turn = "player"
-        game.player_shoot(pygame.mouse.get_pos())
         game.use_draw()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -173,6 +171,15 @@ while run:
                     if game.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                         choice = "quit_game"
                         buttonclick.play()
+                    if game.turn == "player":
+                        for a, row in enumerate(game.board_rect_AI):
+                            for b, rect in enumerate(row):
+                                if rect.collidepoint(pygame.mouse.get_pos()):
+                                    game.player_shoot(a,b)
+            for a, row in enumerate(game.board_rect_AI):
+                for b, rect in enumerate(row):
+                    if rect.collidepoint(pygame.mouse.get_pos()):
+                        game.mark_hover_tile(a,b)
 
         game.check_end()
         if game.turn == "cpu" and game.is_end is False:
