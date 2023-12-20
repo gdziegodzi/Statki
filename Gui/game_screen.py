@@ -30,7 +30,7 @@ class game_screen():
 
         # to test board are now generated
         # self.game_board_1 = self.generate_ship_board()
-        self.game_board_2 = self.generate_ship_board()
+        self.game_board_2 = self.generate_ship_manager()
         # --------------------------------------------------------------------------
 
         self.turn = "player"
@@ -353,11 +353,27 @@ class game_screen():
     # clock = pygame.time.Clock()
     # start_time = pygame.time.get_ticks()
 
-    def generate_ship_board(self):
-        board = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
-        ships_to_place = self.tab_number_of_ship
+    def generate_ship_manager(self):
+        MAX_ERRORS = 50
+
+        b = (None, None)
         i = 0
+        while b[0] is None:
+            i += 1
+            print(i, ". attempt to create a board", sep="")
+
+            b = self.generate_ship_board(MAX_ERRORS)
+
+        print(i+1, ". board created successfully", sep="")
+        return b[0]
+
+    def generate_ship_board(self, MAX_ERRORS):
+        board = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
+        ships_to_place = self.tab_number_of_ship.copy()
+        i = 0
+        errors = 0
         while True:
+            errors = 0
             if all(S == 0 for S in ships_to_place):
                 break
             ship_len = i+1
@@ -374,8 +390,16 @@ class game_screen():
                 r_max = r_max - ship_len + 1
             possible_to_place = False
             while not possible_to_place:
+                if errors >= MAX_ERRORS:
+                    return None, errors
+                errors += 1
+
                 is_cell_free = False
                 while not is_cell_free:
+                    if errors >= MAX_ERRORS:
+                        return None, errors
+                    errors += 1
+
                     r = random.randint(0, r_max)
                     c = random.randint(0, c_max)
                     if board[r][c] == " ":
@@ -428,13 +452,12 @@ class game_screen():
                 if board[r][c] == ".":
                     board[r][c] = " "
 
-        # TODO delete after develop
         # draw board after preparing
-        for r in range(self.game_board_rows):
-            print(board[r])
-        print()
+        # for r in range(self.game_board_rows):
+        #     print(board[r])
+        # print()
 
-        return board
+        return board, errors
 
     def cpu_move(self):
         self.turn = "pause"
@@ -508,7 +531,7 @@ class game_screen():
         # self.load_game_ship_numbers_from_file('Gui/ships.txt')
         self.game_board_1 = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
         self.set_ships_number(4,3,2,1)
-        self.game_board_2 = self.generate_ship_board()
+        self.game_board_2 = self.generate_ship_manager()
         self.board_rect = [[pygame.Rect(0, 0, 0, 0) for _ in range(self.game_board_cols)] for _ in
                            range(self.game_board_rows)]
         self.board_rect = self.prepare_board(self.start_x, self.start_y)
