@@ -322,7 +322,7 @@ class game_screen():
         # winner
         winner_text_string = ""
         if self.is_end:
-            if self.turn == "cpu":
+            if self.turn == "player":
                 winner_text_string = "Komputer zwyciężył"
             else:
                 winner_text_string = "Wygrałeś"
@@ -460,7 +460,7 @@ class game_screen():
         if not any("S" in s for s in self.game_board_1):
             self.is_end = True
 
-        elif not any("S" in s for s in self.game_board_2):
+        elif not any("S" in s for s in self.game_board_2) and not any("Sh" in s for s in self.game_board_2):
             self.is_end = True
 
         else:
