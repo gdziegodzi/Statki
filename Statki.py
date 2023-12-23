@@ -174,7 +174,7 @@ while run:
                     if game.turn == "player":
                         for a, row in enumerate(game.board_rect_AI):
                             for b, rect in enumerate(row):
-                                if rect.collidepoint(pygame.mouse.get_pos()):
+                                if rect.collidepoint(pygame.mouse.get_pos()) and game.is_end is False:
                                     game.player_shoot(a,b)
             for a, row in enumerate(game.board_rect_AI):
                 for b, rect in enumerate(row):
