@@ -52,9 +52,10 @@ class SetShips():
         # self.board colors
         self.tile_color_empty = (255, 255, 255)
         self.tile_color_ship = (140, 70, 20)
-        self.tile_color_shotted_empty = (128, 128, 128)
+        self.tile_color_shotted_empty = (180, 190, 190) # w tym przypadku kolor zajetych pól obok statku
         self.tile_color_shotted_ship = (255, 0, 0)
         self.tile_color_border = (200, 232, 232)
+        self.tile_color_hover = (190, 160, 140)
 
         # bottom ui background (footer)
         self.bottom_ui_bg_color = (200, 232, 232)
@@ -114,7 +115,6 @@ class SetShips():
         self.but_show_ship = []
         self.tile_size = 650 // self.game_board_rows
         self.tile_color = (140, 70, 20)
-        self.tile_color_hover = (100, 30, 00)
         for i in range(4):
             butship = pu.button(self.tile_color, self.ships_placement_x + 50 + i * (self.tile_size + 100),
                                 self.ships_placement_y + 100, self.tile_size, self.tile_size + (self.tile_size * i))
@@ -247,14 +247,16 @@ class SetShips():
         for row in range(self.game_board_rows):
             for col in range(self.game_board_cols):
                 if row < len(game_board) and col < len(game_board[row]):  # Dodane warunki sprawdzające indeksy
-                    marker_color = (255, 255, 255)
+                    marker_color = self.tile_color_empty
 
                     if game_board[row][col] == " ":
-                        marker_color = (255, 255, 255)
+                        marker_color = self.tile_color_empty
                     elif game_board[row][col] == "S":
                         marker_color = self.tile_color_ship
                     elif game_board[row][col] == "h":
-                        marker_color = (200, 200, 200)
+                        marker_color = self.tile_color_hover
+                    elif game_board[row][col] == ".":
+                        marker_color = self.tile_color_shotted_empty
 
                     pygame.draw.rect(board, self.tile_color_border,
                                      (row * tile_size, col * tile_size, tile_size, tile_size))
