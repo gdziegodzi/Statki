@@ -65,6 +65,7 @@ class main_menu():
         self.title_text = self.title_text.render("Gra w statki", 1, self.menu_lettering)
         self.title_x = (self.SCREEN_WIDTH - self.title_text.get_width()) // 2
         self.title_y = 50  # Adjust the vertical position of the title
+
     def draw_main_menu(self):
         self.screen.fill(self.background_color)
 
@@ -82,8 +83,9 @@ class main_menu():
                 b.color = self.button_color
                 b.draw(self.screen)
             a+=1
-            
-    
+
+
+
     def use_draw(self):
         self.draw_main_menu()
         

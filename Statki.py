@@ -8,6 +8,9 @@ import Gui.Settings as st
 import Gui.Page_custom as pc
 import Gui.scoreboard as sb
 import Gui.SetShips as ss
+import Gui.loginScreen as ls
+import Gui.loginPage as lp
+import Gui.registerPage as rp
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -15,7 +18,7 @@ SCREEN_HEIGHT = 1080
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 # wybór okna startowego
-choice = "main_menu"
+choice = "loginScreen"
 
 # Głośność
 volumeMusic = 0.05
@@ -61,6 +64,9 @@ settings = st.settings(screen, choice, volumeMusic, volumeEffects)
 custom = pc.page_custom(screen, volumeMusic, volumeEffects)
 scoreboard = sb.scoreboard(screen)
 SetShips = ss.SetShips(screen)
+loginScreen = ls.loginScreen(screen)
+loginPage = lp.loginPage(screen)
+registerPage = rp.registerPage(screen)
 
 run = True
 
@@ -110,6 +116,100 @@ while run:
                                         settings.prechoice = "main_menu"
                                     if choice == "setShips":
                                         SetShips.set_new_value()
+
+    if choice == "loginScreen":
+        loginScreen.use_draw()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    buttonclick.play()
+                    for b in loginScreen.tab_but:
+                        if b.but_rect.collidepoint(pygame.mouse.get_pos()):
+                            for t in loginScreen.menu_buttons:
+                                if t["text"] == b.text:
+                                    choice = t["function"]
+
+    if choice =="registerPage":
+        registerPage.use_draw()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if registerPage.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "quit_game"
+                if registerPage.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "loginScreen"
+                    buttonclick.play()
+                if registerPage.input_rect_login.collidepoint(event.pos):
+                    registerPage.active_login = not registerPage.active_login
+                    registerPage.active_password = False
+                    registerPage.active_password_repeat = False
+                elif registerPage.input_rect_password.collidepoint(event.pos):
+                    registerPage.active_password = not registerPage.active_password
+                    registerPage.active_login = False
+                    registerPage.active_password_repeat = False
+                elif registerPage.input_rect_password_repeat.collidepoint(event.pos):
+                    registerPage.active_password_repeat = True
+                    registerPage.active_login = False
+                    registerPage.active_password = False
+                else:
+                    registerPage.active_login = False
+                    registerPage.active_password = False
+                    registerPage.active_password_repeat = False
+            if event.type == pygame.KEYDOWN:
+                if registerPage.active_login:
+                    registerPage.handle_text_input(event)
+                elif registerPage.active_password:
+                    registerPage.handle_text_input(event)
+                elif registerPage.active_password_repeat:
+                    registerPage.handle_text_input(event)
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    buttonclick.play()
+                    for b in loginScreen.tab_but:
+                        if b.but_rect.collidepoint(pygame.mouse.get_pos()):
+                            for t in loginScreen.menu_buttons:
+                                if t["text"] == b.text:
+                                    choice = t["function"]
+
+    if choice =="loginPage":
+        loginPage.use_draw()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if loginPage.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "quit_game"
+                if loginPage.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "loginScreen"
+                    buttonclick.play()
+                if loginPage.input_rect_login.collidepoint(event.pos):
+                    loginPage.active_login = not loginPage.active_login
+                    loginPage.active_password = False
+                elif loginPage.input_rect_password.collidepoint(event.pos):
+                    loginPage.active_password = not loginPage.active_password
+                    loginPage.active_login = False
+                else:
+                    loginPage.active_login = False
+                    loginPage.active_password = False
+            if event.type == pygame.KEYDOWN:
+                if loginPage.active_login:
+                    loginPage.handle_text_input(event)
+                elif loginPage.active_password:
+                    loginPage.handle_text_input(event)
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    buttonclick.play()
+                    for b in loginScreen.tab_but:
+                        if b.but_rect.collidepoint(pygame.mouse.get_pos()):
+                            for t in loginScreen.menu_buttons:
+                                if t["text"] == b.text:
+                                    choice = t["function"]
+
 
     if choice == "setShips":
         SetShips.use_draw()
