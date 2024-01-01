@@ -116,6 +116,7 @@ while run:
                                         settings.prechoice = "main_menu"
                                     if choice == "setShips":
                                         SetShips.set_new_value()
+
     if choice == "loginScreen":
         loginScreen.use_draw()
         for event in pygame.event.get():
@@ -208,6 +209,7 @@ while run:
                             for t in loginScreen.menu_buttons:
                                 if t["text"] == b.text:
                                     choice = t["function"]
+
 
     if choice == "setShips":
         SetShips.use_draw()
