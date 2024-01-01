@@ -38,7 +38,7 @@ class loginScreen():
         self.menu_buttons = [
         {"text": "Graj jako gość", "function": "main_menu"},
         {"text": "Zaloguj", "function": "loginPage"},
-        {"text": "Rejestracja", "function": "loginPage"},
+        {"text": "Rejestracja", "function": "registerPage"},
         ]
 
         self.button_font = "Comics Sans"

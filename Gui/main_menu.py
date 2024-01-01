@@ -66,18 +66,6 @@ class main_menu():
         self.title_x = (self.SCREEN_WIDTH - self.title_text.get_width()) // 2
         self.title_y = 50  # Adjust the vertical position of the title
 
-        # graj jako gosc
-        self.guest_button_color = (200, 0, 0)
-        self.guest_button_hover_color = (150, 0, 0)
-        self.guest_button = pu.button(self.guest_button_color, self.SCREEN_WIDTH/2 + 60, 10, 50, 50, "X", (0, 0, 0),
-                                      "monospace",
-                                      30)
-
-        # zaloguj zeby grac
-        self.login_button_color = (128, 128, 128)
-        self.login_button_hover_color = (128, 128, 200)
-        self.login_button = pu.button(self.login_button_color, self.SCREEN_WIDTH/2 - 220, 10, 150, 50, "Menu", (0, 0, 0),
-                                      "monospace", 30)
     def draw_main_menu(self):
         self.screen.fill(self.background_color)
 
