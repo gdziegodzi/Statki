@@ -1,19 +1,29 @@
+import os
+
 import Gui.Pygame_Util as pu
 import pygame
+import subprocess
 from pygame import mixer
 import tkinter as tk
+import Gui.game_screen
+
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 pygame.init()
 pygame.font.init()
 
+
+
+
 class page_custom():
     def __init__(self, s, vol1, vol2):
         self.screen = s
-        self.volume = 0.05
+        self.volume = 0.10
 
         self.fontcolor = (19, 38, 87)
+
+
 
         # Volume Sliders
         self.volumeMusic = vol1
@@ -29,6 +39,13 @@ class page_custom():
         # Tab declaration
         self.BoardSize = []
         self.Ships = [[],[],[],[]]
+
+
+
+        # Przycisk graj
+        self.play_button_color = (0, 200, 0)
+        self.play_button_hover_color = (0, 150, 0)
+        self.play_button = pu.button(self.play_button_color, SCREEN_WIDTH - 400, 10, 150, 50, "Graj", (0, 0, 0),"monospace", 30)
 
         # Inicjalizacja przycisku wyjścia
         self.exit_button_color = (200, 0, 0)
@@ -48,6 +65,7 @@ class page_custom():
         for j in range(0,4):
             for i in range(0,9):
                 self.Ships[j].append((pu.checkbox((0,0,0), 130+(i*100), 380+(j*150), 30, 30)))
+
 
     def Custom_page_draw(self):
         self.screen.fill(self.background_colour)
@@ -117,13 +135,16 @@ class page_custom():
                     selected_board = None
                     if self.BoardSize[0].isChecked():
                         selected_board = '9x9'
+
                     elif self.BoardSize[1].isChecked():
                         selected_board = '10x10'
-                    # Dodaj warunki dla 11x11 i 12x12
+
                     elif self.BoardSize[2].isChecked():
                         selected_board = '11x11'
+
                     elif self.BoardSize[3].isChecked():
                         selected_board = '12x12'
+
 
                     if selected_board:
                         clickable_count = checkbox_configuration[selected_board].get(4 - j, 0)
@@ -141,12 +162,116 @@ class page_custom():
 
         self.draw_exit_button()
         self.draw_menu_button()
+        self.draw_play_button()
 
         self.volumeMusicSlider.newButPos(self.volumeMusic)
         self.volumeEffectsSlider.newButPos(self.volumeEffects)
 
         self.volumeMusicSlider.draw(self.screen)
         self.volumeEffectsSlider.draw(self.screen)
+    def update_gameboard_file(self):
+        selected_board = None
+        if self.BoardSize[0].isChecked():
+            selected_board = '9\n9'
+        elif self.BoardSize[1].isChecked():
+            selected_board = '10\n10'
+        elif self.BoardSize[2].isChecked():
+            selected_board = '11\n11'
+        elif self.BoardSize[3].isChecked():
+            selected_board = '12\n12'
+        elif selected_board == None:
+            selected_board = '10\n10'
+
+
+        if selected_board:
+            with open("Gui/gameboard.txt", "w") as file:
+                file.write(f"{selected_board}\n")
+    def update_ship_number_file(self):
+        selected_number1 = None
+        selected_number2 = None
+        selected_number3 = None
+        selected_number4 = None
+        if self.Ships[0][0].isChecked():
+            selected_number1 = '1'
+        elif self.Ships[0][1].isChecked():
+            selected_number1 = '2'
+        elif self.Ships[0][2].isChecked():
+            selected_number1 = '3'
+        elif self.Ships[0][3].isChecked():
+            selected_number1 = '4'
+        elif self.Ships[0][4].isChecked():
+            selected_number1 = '5'
+        elif self.Ships[0][5].isChecked():
+            selected_number1 = '6'
+        elif self.Ships[0][6].isChecked():
+            selected_number1 = '7'
+        elif self.Ships[0][7].isChecked():
+            selected_number1 = '8'
+        elif self.Ships[0][8].isChecked():
+            selected_number1 = '9'
+
+
+        if self.Ships[1][0].isChecked():
+            selected_number2 = '1'
+        elif self.Ships[1][1].isChecked():
+            selected_number2 = '2'
+        elif self.Ships[1][2].isChecked():
+            selected_number2 = '3'
+        elif self.Ships[1][3].isChecked():
+            selected_number2 = '4'
+        elif self.Ships[1][4].isChecked():
+            selected_number2 = '5'
+        elif self.Ships[1][5].isChecked():
+            selected_number2 = '6'
+        elif self.Ships[1][6].isChecked():
+            selected_number2 = '7'
+        elif self.Ships[1][7].isChecked():
+            selected_number2 = '8'
+        elif self.Ships[1][8].isChecked():
+            selected_number2 = '9'
+
+        if self.Ships[2][0].isChecked():
+            selected_number3 = '1'
+        elif self.Ships[2][1].isChecked():
+            selected_number3 = '2'
+        elif self.Ships[2][2].isChecked():
+            selected_number3 = '3'
+        elif self.Ships[2][3].isChecked():
+            selected_number3 = '4'
+        elif self.Ships[2][4].isChecked():
+            selected_number3 = '5'
+        elif self.Ships[2][5].isChecked():
+            selected_number3 = '6'
+        elif self.Ships[2][6].isChecked():
+            selected_number3 = '7'
+        elif self.Ships[2][7].isChecked():
+            selected_number3 = '8'
+        elif self.Ships[2][8].isChecked():
+            selected_number3 = '9'
+
+        if self.Ships[3][0].isChecked():
+            selected_number4 = '1'
+        elif self.Ships[3][1].isChecked():
+            selected_number4 = '2'
+        elif self.Ships[3][2].isChecked():
+            selected_number4 = '3'
+        elif self.Ships[3][3].isChecked():
+            selected_number4 = '4'
+        elif self.Ships[3][4].isChecked():
+            selected_number4 = '5'
+        elif self.Ships[3][5].isChecked():
+            selected_number4 = '6'
+        elif self.Ships[3][6].isChecked():
+            selected_number4 = '7'
+        elif self.Ships[3][7].isChecked():
+            selected_number4 = '8'
+        elif self.Ships[3][8].isChecked():
+            selected_number4 = '9'
+
+        if selected_number1 and selected_number2 and selected_number3 and selected_number4:
+            with open("Gui/ships.txt", "w") as file:
+                file.write(f"{selected_number1}\n{selected_number2}\n{selected_number3}\n{selected_number4}")
+
 
     def draw_exit_button(self):
         self.exit_button.draw(self.screen)
@@ -163,6 +288,38 @@ class page_custom():
             self.menu_button.color = self.menu_button_hover_color
         else:
             self.menu_button.color = self.menu_button_color
+    def draw_play_button(self):
+        self.play_button.draw(self.screen)
+
+        if self.play_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+            self.play_button.color = self.play_button_hover_color
+        else:
+            self.play_button.color = self.play_button_color
+
+    def load_slider_speaker(self, filename):
+        try:
+            with open(filename, 'r') as file:
+                lines = file.readlines()
+
+            if len(lines) >= 2:
+                self.volumeMusic = float(lines[0].strip())
+                self.volumeEffects = float(lines[1].strip())
+        except FileNotFoundError:
+            print(f"Błąd: {filename} nie znaleziony.")
+        except Exception as e:
+            print(f"Błąd podczas wczytywania wartości z pliku {filename}: {e}")
+
+    def save_slider_values_to_file(self, file_path, volume_music, volume_effects):
+        with open(file_path, "w") as file:
+            file.write(f"{volume_music:.2f}\n")
+            file.write(f"{volume_effects:.2f}\n")
+
 
     def use_draw(self):
+        self.volumeMusic = self.volumeMusicSlider.get_value()
+        self.volumeEffects = self.volumeEffectsSlider.get_value()
+        self.update_gameboard_file()
+        self.update_ship_number_file()
+        self.save_slider_values_to_file('Gui/sound.txt', self.volumeMusic, self.volumeEffects)
         self.Custom_page_draw()
+

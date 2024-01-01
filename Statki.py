@@ -1,3 +1,5 @@
+import atexit
+
 import pygame
 from pygame import mixer
 import Gui.game_screen as gs
@@ -6,6 +8,8 @@ import Gui.Settings as st
 import Gui.Page_custom as pc
 import Gui.scoreboard as sb
 import Gui.SetShips as ss
+import Gui.loginScreen as ls
+import Gui.loginPage as lp
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -13,11 +17,19 @@ SCREEN_HEIGHT = 1080
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 # wybór okna startowego
-choice = "main_menu"
+choice = "loginScreen"
 
 # Głośność
 volumeMusic = 0.05
 volumeEffects = 0.20
+try:
+    with open("Gui/sound.txt", "r") as file:
+        lines = file.readlines()
+        if len(lines) >= 2:
+            volumeMusic = float(lines[0].strip())
+            volumeEffects = float(lines[1].strip())
+except FileNotFoundError:
+    print("Plik sound.txt nie istnieje. Używam domyślnych wartości.")
 
 # Muzyka w tle
 pygame.mixer.init()
@@ -43,6 +55,7 @@ def setVolumeEffects(vol):
 
 
 setVolumeEffects(volumeEffects)
+
 # obiekty stron
 game = gs.game_screen(screen)
 menu = mm.main_menu(screen)
@@ -50,8 +63,34 @@ settings = st.settings(screen, choice, volumeMusic, volumeEffects)
 custom = pc.page_custom(screen, volumeMusic, volumeEffects)
 scoreboard = sb.scoreboard(screen)
 SetShips = ss.SetShips(screen)
+loginScreen = ls.loginScreen(screen)
+loginPage = lp.loginPage(screen)
 
 run = True
+
+try:
+    with open("Gui/sound.txt", "r") as file:
+        lines = file.readlines()
+        if len(lines) >= 2:
+            volumeMusic = float(lines[0].strip())
+            volumeEffects = float(lines[1].strip())
+except FileNotFoundError:
+    print("Plik sound.txt nie istnieje. Używam domyślnych wartości.")
+
+
+def save_game_board_size_to_file(filename, rows, cols):
+    with open(filename, 'w') as file:
+        file.write(f"{rows}\n{cols}")
+
+
+def save_ships_number_to_file(filename, number1, number2, number3, number4):
+    with open(filename, 'w') as file:
+        file.write(f"{number1}\n{number2}\n{number3}\n{number4}")
+
+
+# Rejestracja funkcji przy wyjściu z programu
+atexit.register(save_game_board_size_to_file, 'Gui/gameboard.txt', 10, 10)
+atexit.register(save_ships_number_to_file, 'Gui/ships.txt', 4, 3, 2, 2)
 
 while run:
     screen.fill((200, 232, 232))
@@ -73,6 +112,57 @@ while run:
                                     choice = t["function"]
                                     if choice == "settings":
                                         settings.prechoice = "main_menu"
+                                    if choice == "setShips":
+                                        SetShips.set_new_value()
+    if choice == "loginScreen":
+        loginScreen.use_draw()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                run = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    buttonclick.play()
+                    for b in loginScreen.tab_but:
+                        if b.but_rect.collidepoint(pygame.mouse.get_pos()):
+                            for t in loginScreen.menu_buttons:
+                                if t["text"] == b.text:
+                                    choice = t["function"]
+
+    if choice =="loginPage":
+        loginPage.use_draw()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if loginPage.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "quit_game"
+                if loginPage.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    choice = "loginScreen"
+                    buttonclick.play()
+                if loginPage.input_rect_login.collidepoint(event.pos):
+                    loginPage.active_login = not loginPage.active_login
+                    loginPage.active_password = False
+                elif loginPage.input_rect_password.collidepoint(event.pos):
+                    loginPage.active_password = not loginPage.active_password
+                    loginPage.active_login = False
+                else:
+                    loginPage.active_login = False
+                    loginPage.active_password = False
+            if event.type == pygame.KEYDOWN:
+                if loginPage.active_login:
+                    loginPage.handle_text_input(event)
+                elif loginPage.active_password:
+                    loginPage.handle_text_input(event)
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    buttonclick.play()
+                    for b in loginScreen.tab_but:
+                        if b.but_rect.collidepoint(pygame.mouse.get_pos()):
+                            for t in loginScreen.menu_buttons:
+                                if t["text"] == b.text:
+                                    choice = t["function"]
 
     if choice == "setShips":
         SetShips.use_draw()
@@ -113,8 +203,6 @@ while run:
                     if rect.collidepoint(pygame.mouse.get_pos()):
                         SetShips.mark_hover_tile(a, b)
     if choice == "game_screen":
-        game.turn = "player"
-        game.player_shoot(pygame.mouse.get_pos())
         game.use_draw()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -136,11 +224,21 @@ while run:
                     if game.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                         choice = "quit_game"
                         buttonclick.play()
-        if game.turn == "cpu":
+                    if game.turn == "player":
+                        for a, row in enumerate(game.board_rect_AI):
+                            for b, rect in enumerate(row):
+                                if rect.collidepoint(pygame.mouse.get_pos()) and game.is_end is False:
+                                    game.player_shoot(a,b)
+            for a, row in enumerate(game.board_rect_AI):
+                for b, rect in enumerate(row):
+                    if rect.collidepoint(pygame.mouse.get_pos()):
+                        game.mark_hover_tile(a,b)
+
+        game.check_end()
+        if game.turn == "cpu" and game.is_end is False:
             game.use_draw()
             game.cpu_move()
         game.check_end()
-
 
     if choice == "settings":
         settings.volumeMusic = volumeMusic
@@ -209,6 +307,12 @@ while run:
                     choice = "quit_game"
                 if custom.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "main_menu"
+                    buttonclick.play()
+                if custom.play_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    SetShips.set_new_value()
+                    choice = "setShips"
+                    buttonclick.play()
+
                     buttonclick.play()
             if pygame.mouse.get_pressed()[0] and custom.volumeMusicSlider.conteiner_rect.collidepoint(
                     pygame.mouse.get_pos()):
