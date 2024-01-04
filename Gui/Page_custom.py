@@ -268,7 +268,7 @@ class page_custom():
         elif self.Ships[3][8].isChecked():
             selected_number4 = '9'
 
-        if selected_number1 and selected_number2 and selected_number3 and selected_number4:
+        if selected_number1 or selected_number2 or selected_number3 or selected_number4:
             with open("Gui/ships.txt", "w") as file:
                 file.write(f"{selected_number1}\n{selected_number2}\n{selected_number3}\n{selected_number4}")
 
