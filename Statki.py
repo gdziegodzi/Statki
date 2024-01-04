@@ -11,6 +11,7 @@ import Gui.SetShips as ss
 import Gui.loginScreen as ls
 import Gui.loginPage as lp
 import Gui.registerPage as rp
+import sqlite3
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -90,9 +91,26 @@ def save_ships_number_to_file(filename, number1, number2, number3, number4):
         file.write(f"{number1}\n{number2}\n{number3}\n{number4}")
 
 
+
 # Rejestracja funkcji przy wyjściu z programu
 atexit.register(save_game_board_size_to_file, 'Gui/gameboard.txt', 10, 10)
 atexit.register(save_ships_number_to_file, 'Gui/ships.txt', 4, 3, 2, 2)
+
+#Connect with db
+dbconn = sqlite3.connect('player.db')
+dbcursor = dbconn.cursor()
+
+dbcursor.execute('''
+    CREATE TABLE IF NOT EXISTS player (
+        id INTEGER PRIMARY KEY,
+        login TEXT NOT NULL,
+        password TEXT NOT NULL
+    )
+''')
+dbconn.close()
+
+
+
 
 while run:
     screen.fill((200, 232, 232))
@@ -116,6 +134,8 @@ while run:
                                         settings.prechoice = "main_menu"
                                     if choice == "setShips":
                                         SetShips.set_new_value()
+                                        game.set_new_value()
+
 
     if choice == "loginScreen":
         loginScreen.use_draw()
@@ -188,6 +208,10 @@ while run:
                 if loginPage.menu_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     choice = "loginScreen"
                     buttonclick.play()
+                if loginPage.login_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+                    loginPage.login_user()
+                    if loginPage.info_message == "Zalogowano":
+                        choice = "main_menu"
                 if loginPage.input_rect_login.collidepoint(event.pos):
                     loginPage.active_login = not loginPage.active_login
                     loginPage.active_password = False
@@ -357,6 +381,7 @@ while run:
                     buttonclick.play()
                 if custom.play_button.but_rect.collidepoint(pygame.mouse.get_pos()):
                     SetShips.set_new_value()
+                    game.set_new_value()
                     choice = "setShips"
                     buttonclick.play()
 

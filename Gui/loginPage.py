@@ -1,5 +1,7 @@
 import pygame
 import Gui.Pygame_Util as pu
+import sqlite3
+import Gui.main_menu
 
 pygame.init()
 pygame.display.set_caption('Tablica Wyników')
@@ -9,12 +11,21 @@ SCREEN_HEIGHT = 1080
 BACKGROUND_COLOR = (200, 232, 232)
 text_color = (19, 38, 87)
 
+#connect with db
+dbconn = sqlite3.connect('player.db')
+dbcursor = dbconn.cursor()
+
 
 class loginPage:
     def __init__(self, s):
         self.screen = s
         self.active_login = False
         self.active_password = False
+
+        self.prev_button_state = False
+
+        # message
+        self.info_message = ""
 
         # Fonts
         self.font_title = pygame.font.SysFont("arial", 80, bold=True)
@@ -44,12 +55,7 @@ class loginPage:
         self.login_button = pu.button(self.login_button_color, (SCREEN_WIDTH - 600+300) // 2,
                                       (SCREEN_HEIGHT - 800) // 2 + 400, 300, 50, "Zaloguj", (0, 0, 0), "monospace", 30)
 
-        # register button
-        self.register_button_color = (200, 0, 200)
-        self.register_button_hover_color = (150, 0, 150)
-        self.register_button = pu.button(self.register_button_color, (SCREEN_WIDTH - 600+300) // 2,
-                                         (SCREEN_HEIGHT - 800) // 2 + 470, 300, 50, "Zarejestruj", (0, 0, 0),
-                                         "monospace", 30)
+
 
         self.base_font = pygame.font.Font(None, 40)
         self.user_text = ''
@@ -133,7 +139,9 @@ class loginPage:
 
         self.draw_input_login()
         self.draw_login_button()
-        self.draw_register_button()
+
+        self.draw_text(self.info_message, self.base_font, text_color, 100, 500)
+
         pygame.display.flip()
         self.clock.tick(60)
 
@@ -174,15 +182,23 @@ class loginPage:
     def draw_login_button(self):
         self.login_button.draw(self.screen)
 
-        if self.login_button.but_rect.collidepoint(pygame.mouse.get_pos()):
-            self.login_button.color = self.login_button_hover_color
+        mouse_pos = pygame.mouse.get_pos()
+        is_button_pressed = pygame.mouse.get_pressed()[0]
+
+        if self.login_button.but_rect.collidepoint(mouse_pos) and is_button_pressed and not self.prev_button_state:
+            print("sukces")
+            #self.login_user()  # Wywołuje funkcję logowania użytkownika
         else:
             self.login_button.color = self.login_button_color
 
-    def draw_register_button(self):
-        self.register_button.draw(self.screen)
+        self.prev_button_state = is_button_pressed  # Aktualizuje poprzedni stan przycisku
+    def login_user(self):
+        # Sprawdź, czy użytkownik o podanym loginie i haśle istnieje w bazie danych
+        dbcursor.execute("SELECT * FROM player WHERE login=? AND password=?", (self.user_text, self.password_text))
+        existing_user = dbcursor.fetchone()
+        if existing_user is not None:
+            self.info_message = "Zalogowano"
 
-        if self.register_button.but_rect.collidepoint(pygame.mouse.get_pos()):
-            self.register_button.color = self.register_button_hover_color
         else:
-            self.register_button.color = self.register_button_color
+            self.info_message = "Błąd logowania"
+

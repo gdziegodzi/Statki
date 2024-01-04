@@ -23,8 +23,10 @@ class game_screen():
         # rows should equal columns
         # square board 8x8, 9x9, 10x10, 11x11, 12x12
         self.tab_number_of_ship = [4, 3, 2, 1]
-        self.game_board_rows = 10
-        self.game_board_cols = 10
+        #self.game_board_rows = 10
+        #self.game_board_cols = 10
+        self.load_game_board_size_from_file("Gui/gameboard.txt")  # Load values from file
+        self.load_game_ship_numbers_from_file("Gui/ships.txt")
 
         self.game_board_1 = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
 
@@ -521,21 +523,49 @@ class game_screen():
     #Funkcja ustawia noa ilość statków
     def set_ships_number(self, a, b, c, d):
 
-        self.tab_number_of_ship = [a, b, c, d]
-        
+        self.tab_number_of_ship = [self.number1, self.number2, self.number3, self.number4]
+
+
+    def load_game_board_size_from_file(self, filename):
+        try:
+            with open(filename, 'r') as file:
+                lines = file.readlines()
+
+            if len(lines) >= 2:
+                self.game_board_rows = int(lines[0].strip())
+                self.game_board_cols = int(lines[1].strip())
+        except FileNotFoundError:
+            print(f"Błąd: {filename} nie znaleziony.")
+        except Exception as e:
+            print(f"Błąd podczas wczytywania wartości z pliku {filename}: {e}")
+
+    def load_game_ship_numbers_from_file(self, filename):
+        try:
+            with open(filename, 'r') as file:
+                lines = file.readlines()
+
+            if len(lines) >= 4:
+                self.number1 = int(lines[0].strip())
+                self.number2 = int(lines[1].strip())
+                self.number3 = int(lines[2].strip())
+                self.number4 = int(lines[3].strip())
+
+        except FileNotFoundError:
+            print(f"Błąd: {filename} nie znaleziony.")
+        except Exception as e:
+            print(f"Błąd podczas wczytywania wartości z pliku {filename}: {e}")
+
     # Funkcja do ustawiania nowych wartości po otrzymaniu danych o statkach
     def set_new_value(self):
 
-
-        # self.load_game_board_size_from_file('Gui/gameboard.txt')
-        # self.load_game_ship_numbers_from_file('Gui/ships.txt')
+        self.load_game_board_size_from_file('Gui/gameboard.txt')
+        self.load_game_ship_numbers_from_file('Gui/ships.txt')
         self.game_board_1 = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
-        self.set_ships_number(4,3,2,1)
+        self.set_ships_number(self.number1,self.number2,self.number3,self.number4)
         self.game_board_2 = self.generate_ship_manager()
         self.board_rect = [[pygame.Rect(0, 0, 0, 0) for _ in range(self.game_board_cols)] for _ in
                            range(self.game_board_rows)]
         self.board_rect = self.prepare_board(self.start_x, self.start_y)
         self.board_rect_AI = [[pygame.Rect(0, 0, 0, 0) for _ in range(self.game_board_cols)] for _ in
                            range(self.game_board_rows)]
-        self.board_rect_AI = self.prepare_board(self.start_x, self.start_y)
-        
+        self.board_rect_AI = self.prepare_board(self.start_x+self.space_between_boards+self.board_width, self.start_y)

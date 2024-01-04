@@ -1,5 +1,7 @@
 import pygame
 import Gui.Pygame_Util as pu
+import sqlite3
+
 
 pygame.init()
 pygame.display.set_caption('Tablica Wyników')
@@ -9,6 +11,10 @@ SCREEN_HEIGHT = 1080
 BACKGROUND_COLOR = (200, 232, 232)
 text_color = (19, 38, 87)
 
+#connect with db
+dbconn = sqlite3.connect('player.db')
+dbcursor = dbconn.cursor()
+
 
 class registerPage:
     def __init__(self, s):
@@ -16,6 +22,11 @@ class registerPage:
         self.active_login = False
         self.active_password = False
         self.active_password_repeat = False
+
+        self.prev_button_state = False
+
+        # Register message
+        self.info_message = ""
 
         # Fonts
         self.font_title = pygame.font.SysFont("arial", 80, bold=True)
@@ -130,6 +141,9 @@ class registerPage:
         # Draw title
         self.draw_text(self.title_text, self.font_title, text_color, self.title_text_x, 50)
 
+        # Message if registered
+        self.draw_text(self.info_message, self.base_font, text_color, 100, 500)
+
         # rysowanie przycisku wyjścia
         self.exit_button.draw(self.screen)
         if self.exit_button.but_rect.collidepoint(pygame.mouse.get_pos()):
@@ -188,11 +202,38 @@ class registerPage:
             else:
                 self.password_repeat_text += event.unicode
 
-
     def draw_register_button(self):
         self.register_button.draw(self.screen)
 
-        if self.register_button.but_rect.collidepoint(pygame.mouse.get_pos()):
-            self.register_button.color = self.register_button_hover_color
+        mouse_pos = pygame.mouse.get_pos()
+        is_button_pressed = pygame.mouse.get_pressed()[0]
+
+        if self.register_button.but_rect.collidepoint(mouse_pos) and is_button_pressed and not self.prev_button_state:
+
+            self.register_user()  # Wywołuje funkcję rejestracji użytkownika
         else:
             self.register_button.color = self.register_button_color
+
+        self.prev_button_state = is_button_pressed  # Aktualizuje poprzedni stan przycisku
+
+    def register_user(self):
+        # Check, if user with same login exists
+        dbcursor.execute("SELECT * FROM player WHERE login=?", (self.user_text,))
+        existing_user = dbcursor.fetchone()
+
+        if existing_user:
+            self.info_message = "Użytkownik o takim loginie już istnieje."
+        elif self.user_text and self.password_text and self.password_text == self.password_repeat_text:
+            # Add user to database
+            dbcursor.execute("INSERT INTO player (login, password) VALUES (?, ?)", (self.user_text, self.password_text))
+            dbconn.commit()
+            self.info_message = "Zarejestrowano użytkownika."
+        elif not self.user_text and not self.password_text and not self.password_repeat_text:
+            self.info_message = ""  # Pola są puste, więc nie wyświetlamy żadnej wiadomości
+        else:
+            self.info_message = "Błąd rejestracji."
+
+
+
+
+
