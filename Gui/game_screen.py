@@ -258,7 +258,10 @@ class game_screen():
         self.draw_axis_description(self.tile_size, self.space_between_boards, self.start_x, self.start_y)
 
         board = self.prepare_board_draw(self.game_board_1, self.tile_size)
-        board2 = self.prepare_board_draw(self.game_board_2, self.tile_size,True)
+        if not self.is_end:
+            board2 = self.prepare_board_draw(self.game_board_2, self.tile_size, True)
+        else:
+            board2 = self.prepare_board_draw(self.game_board_2, self.tile_size, False)
 
         self.screen.blit(board, (self.start_x, self.start_y))
         self.screen.blit(board2, (self.start_x + self.tile_size * self.game_board_cols + self.space_between_boards, self.start_y))
