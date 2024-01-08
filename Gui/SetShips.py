@@ -12,9 +12,9 @@ class SetShips():
         self.screen = s
         self.load_game_board_size_from_file("Gui/gameboard.txt")  # Load values from file
         self.load_game_ship_numbers_from_file("Gui/ships.txt")
-        #self.game_board_rows = 12
-        #self.game_board_cols = 12
-        self.game_board_1 = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
+
+        # rows should equal columns
+        # square self.board 8x8, 9x9, 10x10, 11x11, 12x12
         """
             space - empty space
             S - ship
@@ -22,13 +22,10 @@ class SetShips():
             X - shotted ship
         """
 
-        # rows should equal columns
-        # square self.board 8x8, 9x9, 10x10, 11x11, 12x12
+        # self.game_board_rows = 12
+        # self.game_board_cols = 12
 
-
-
-
-        # -------------------------------------------------------------------------- end mock
+        self.game_board_1 = [[" " for _ in range(self.game_board_cols)] for _ in range(self.game_board_rows)]
 
         # title background
         self.title_bg_color = (200, 232, 232)
@@ -52,7 +49,7 @@ class SetShips():
         # self.board colors
         self.tile_color_empty = (255, 255, 255)
         self.tile_color_ship = (140, 70, 20)
-        self.tile_color_shotted_empty = (180, 190, 190) # w tym przypadku kolor zajetych pól obok statku
+        self.tile_color_shotted_empty = (128, 128, 128)  # w tym przypadku kolor zajetych pól obok statku
         self.tile_color_shotted_ship = (255, 0, 0)
         self.tile_color_border = (200, 232, 232)
         self.tile_color_hover = (190, 160, 140)
@@ -135,6 +132,76 @@ class SetShips():
 
         # Zmienna do okrerślania czy wszystkie statki są położone
         self.all_ships_placed = False
+
+        # legend button
+        self.legend_button_color = (0, 200, 0)
+        self.legend_button_hover_color = (0, 150, 0)
+        self.legend_button = pu.button(self.legend_button_color,
+                                       SCREEN_WIDTH - 430, 10,
+                                       150, 50, "Legenda", (255, 255, 255), "monospace", 30
+                                       )
+
+        # legend
+        self.legend_bg_color = (189, 189, 189)
+        self.legend_bg_x = 50
+        self.legend_bg_y = 150
+        self.legend_bg_width = self.screen.get_width() - 2 * self.legend_bg_x
+        self.legend_bg_height = 775
+        self.legend_bg_rectangle = pygame.Rect(
+            (self.legend_bg_x, self.legend_bg_y, self.legend_bg_width, self.legend_bg_height))
+        self.show_legend = True
+
+        # legend text
+        self.legend_text_color = (0, 0, 0)
+        self.legend_font_size = 32
+        self.legend_font = pygame.font.SysFont("monospace", self.legend_font_size, bold=True)
+        self.legend_padding = 50
+        self.legend_row_spacing = 100
+        self.legend_text_x = self.legend_bg_x + self.legend_padding
+        self.legend_text_y = self.legend_bg_y + self.legend_padding
+        self.legend_text_left_margin = 75
+
+        self.legend_texts = ["- puste miejsce",
+                             "- statek",
+                             "- miejsce, w którym nie można ustawić statku",
+                             "- klawisz do obrotu statku"]
+
+        self.legend_rendered_texts = [self.legend_font.render(self.legend_texts[0], 1, self.legend_text_color),
+                                      self.legend_font.render(self.legend_texts[1], 1, self.legend_text_color),
+                                      self.legend_font.render(self.legend_texts[2], 1, self.legend_text_color),
+                                      self.legend_font.render(self.legend_texts[3], 1, self.legend_text_color)]
+
+        self.board_colors = [self.tile_color_empty, self.tile_color_ship,
+                             self.tile_color_shotted_empty]
+
+    def draw_legend_button(self):
+        self.legend_button.draw(self.screen)
+
+        if self.legend_button.but_rect.collidepoint(pygame.mouse.get_pos()):
+            self.legend_button.color = self.legend_button_hover_color
+            self.draw_legend()
+        else:
+            self.legend_button.color = self.legend_button_color
+
+    def draw_legend(self):
+        pygame.draw.rect(self.screen, self.legend_bg_color, self.legend_bg_rectangle)
+
+        for i in range(4):
+            if i != 3:
+                pygame.draw.rect(self.screen, self.board_colors[i],
+                                 (self.legend_bg_x + self.legend_padding,
+                                  self.legend_bg_y + self.legend_padding + i * self.legend_row_spacing, 50, 50))
+            else:
+                text = self.my_font.render('R', True, self.legend_text_color)
+                self.screen.blit(text,
+                                 (self.legend_bg_x + self.legend_padding + 10,
+                                  self.legend_bg_y + self.legend_padding + i * self.legend_row_spacing))
+
+            self.screen.blit(self.legend_rendered_texts[i],
+                             (self.legend_text_x + self.legend_text_left_margin,
+                              self.legend_text_y + i * self.legend_row_spacing + self.legend_rendered_texts[
+                                  i].get_height() // 4))
+
     def set_new_value(self):
         self.load_game_board_size_from_file('Gui/gameboard.txt')
         self.load_game_ship_numbers_from_file('Gui/ships.txt')
@@ -453,6 +520,4 @@ class SetShips():
         self.draw_exit_button()
         self.draw_reset_button()
         self.draw_numberships()
-
-
-
+        self.draw_legend_button()
