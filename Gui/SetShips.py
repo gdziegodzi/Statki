@@ -443,6 +443,9 @@ class SetShips():
                 for j in range(ship_len):
                     self.game_board_1[r + j][c] = "S"
             self.tab_number_of_ship[self.chosen_ship] -= 1
+            self.but_ships.append(pu.Statek(ship_len,[r,c],rotation))
+            
+            
             self.all_ships_placed = True
             for a in self.tab_number_of_ship:
                 if a != 0:
@@ -451,8 +454,14 @@ class SetShips():
     def clear_empty_on_board(self):
         for r in range(self.game_board_rows):
             for c in range(self.game_board_cols):
-                if self.game_board_1[r][c] == ".":
+                if self.game_board_1[r][c] == "." or self.game_board_1[r][c] == "h":
                     self.game_board_1[r][c] = " "
+
+        for ship in self.but_ships:
+            for part in ship.getlocation():
+                print(part)
+            print("S:",ship.width)
+
 
     def mark_hover_tile(self, x, y):
         ship_len = self.chosen_ship + 1
@@ -504,6 +513,7 @@ class SetShips():
 
         self.set_ships_number(self.number1, self.number2, self.number3, self.number4)
         self.all_ships_placed = False
+        self.but_ships.clear()
 
     def set_ships_number(self, a, b, c, d):
 
