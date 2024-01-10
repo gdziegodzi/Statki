@@ -125,22 +125,25 @@ class Statek:
         self.width = width
         self.location = location
         self.direction = direction
-        self.shoot_location = set()  # Zbiór pól, które zostały trafione
+        self.shoot_location = []  # Zbiór pól, które zostały trafione
 
-    def location(self):
+    def getlocation(self):
         """
         Zwraca zbiór pól zajmowanych przez statek na planszy.
         """
-        fields = set()
+        fields = []
         x, y = self.location
+        
 
         for i in range(self.width):
-            if self.direction == 'poziomo':
-                fields.add((x + i, y))
-            elif self.direction == 'pionowo':
-                fields.add((x, y + i))
+            if self.direction == 'h':
+                fields.append((x + i, y))
+            elif self.direction == 'v':
+                fields.append((x, y + i))
 
+        
         return fields
+    
 
     def shot(self, pole):
         """
@@ -148,17 +151,19 @@ class Statek:
 
         :param pole: Tuple (x, y) reprezentujące pole, które zostało trafione.
         """
-        self.shoot_location.add(pole)
+        self.shoot_location.append(pole)
 
     def hadItDrown(self):
         """
         Sprawdza, czy statek został zatopiony (wszystkie jego części zostały trafione).
         """
-        return len(self.shoot_location) == self.width
+        hit_fields = set(self.shoot_location)
+        ship_fields = set(self.getlocation())
 
+        return hit_fields == ship_fields
 
 # Przykład użycia:
-# statek = Statek(dlugosc=3, polozenie=(2, 3), kierunek='poziomo')
+# statek = Statek(dlugosc=3, polozenie=(2, 3), kierunek='v')
 # print(statek.zajmowane_pola())  # Zwróci {(2, 3), (3, 3), (4, 3)}
 # statek.trafienie((3, 3))
 # print(statek.czy_zatopiony())  # Zwróci False
